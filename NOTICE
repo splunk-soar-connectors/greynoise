@@ -1,19 +1,14 @@
 Splunk SOAR GreyNoise
-Copyright 2021 Splunk Inc.
+Copyright (c) GreyNoise, 2021
 
 Third-party Software Attributions:
-
-Library: six
-Version: 1.15.0
-License: MIT
-Copyright 2010-2020 Benjamin Peterson
-
-Library: pudb
-Version: 2019.2
-License: MIT
-Copyright 2009 Andreas Kloeckner and contributors
 
 Library: requests
 Version: 2.25.0
 License: Apache 2.0
 Kenneth Reitz
+
+Library: six
+Version: 1.15.0
+License: MIT
+Copyright 2010-2020 Benjamin Peterson
