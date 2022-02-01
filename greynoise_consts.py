@@ -5,7 +5,7 @@
 # URLs
 API_KEY_CHECK_URL = "https://api.greynoise.io/ping"
 LOOKUP_IP_URL = "https://api.greynoise.io/v2/noise/quick/{ip}"
-VISUALIZATION_URL = "https://viz.greynoise.io/ip/{ip}"
+VISUALIZATION_URL = "https://www.greynoise.io/viz/ip/{ip}"
 IP_REPUTATION_URL = "https://api.greynoise.io/v2/noise/context/{ip}"
 GNQL_QUERY_URL = "https://api.greynoise.io/v2/experimental/gnql"
 LOOKUP_IPS_URL = "https://api.greynoise.io/v2/noise/multi/quick?ips={ips}"

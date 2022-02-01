@@ -158,7 +158,7 @@
     {% for result in results %}
         {% if not result.data %}
             <h4 class="wf-h4-style">No lookup information found</h4>
-        {% elif result.data.ip and result.data.code_meaning %}
+        {% elif result.data.ip and result.data.code_message %}
             <h3 class="wf-h3-style">IP Lookup Results</h3>
             <table class="wf-table-horizontal">
                 <tr>
@@ -181,7 +181,7 @@
                         {{result.data.noise}}
                     </td>
                     <td>
-                        {{result.data.code_meaning}}
+                        {{result.data.code_message}}
                     </td>
                     <td>
                         <a target="_blank" rel="noopener noreferrer" href={{result.data.visualization}}>{{result.data.visualization}}</a>
@@ -293,13 +293,13 @@
             <table class="wf-table-horizontal">
                 <tr>
                     <th>IP</th>
-                    <th>RIOT (Rule It OuT)</th>
                     <th>Category</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Explanation</th>
                     <th>Last Updated</th>
                     <th>Trust Level</th>
+                    <th>Visualizer</th>
                     <th>Reference</th>
                 </tr>
                 <tr>
@@ -311,9 +311,6 @@
                                 &nbsp;
                             <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                         </a>
-                    </td>
-                    <td>
-                        {{result.data.riot}}
                     </td>
                     <td>
                         {{result.data.category}}
@@ -332,6 +329,9 @@
                     </td>
                     <td>
                         {{result.data.trust_level}}
+                    </td>
+                    <td>
+                        <a target="_blank" rel="noopener noreferrer" href={{result.data.visualization}}>{{result.data.visualization}}</a>
                     </td>
                     <td>
                         <a target="_blank" rel="noopener noreferrer" href={{result.data.reference}}>{{result.data.reference}}</a>
@@ -384,7 +384,7 @@
                             {{entry.noise}}
                         </td>
                         <td>
-                            {{entry.code_meaning}}
+                            {{entry.code_message}}
                         </td>
                         <td>
                             <a target="_blank" rel="noopener noreferrer" href={{entry.visualization}}>{{entry.visualization}}</a>
@@ -516,7 +516,15 @@
                                         Tags
                                     </td>
                                     <td style="width: 80%">
-                                        {{result.data.tags}}
+                                        {{result.data.viz_tags}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 20%">
+                                        CVE's
+                                    </td>
+                                    <td style="width: 80%">
+                                        {{result.data.cve}}
                                     </td>
                                 </tr>
                             </table>
@@ -571,7 +579,7 @@
                 <table class="datatable wf-table-vertical" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>Query Visualizer: <a target="_blank" rel="noopener noreferrer" href=https://viz.greynoise.io/query/?gnql={{result.param.query|urlencode}}>https://viz.greynoise.io/query/?gnql={{result.param.query|urlencode}}</a></th>
+                            <th>Query Visualizer: <a target="_blank" rel="noopener noreferrer" href=https://www.greynoise.io/viz/query/?gnql={{result.param.query|urlencode}}>https://www.greynoise.io/viz/query/?gnql={{result.param.query|urlencode}}</a></th>
                         </tr>
                         <tr>
                             <th>Results</th>
@@ -679,7 +687,15 @@
                                                 Tags
                                             </td>
                                             <td style="width: 80%">
-                                                {{entry.tags}}
+                                                {{entry.viz_tags}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 20%">
+                                                CVE's
+                                            </td>
+                                            <td style="width: 80%">
+                                                {{entry.cve}}
                                             </td>
                                         </tr>
                                     </table>

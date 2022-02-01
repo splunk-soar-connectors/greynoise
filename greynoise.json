@@ -10,8 +10,8 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "GreyNoise",
-    "license": "Copyright (c) GreyNoise, 2021",
-    "app_version": "2.1.3",
+    "license": "Copyright (c) GreyNoise, 2022",
+    "app_version": "2.5.0",
     "utctime_updated": "2022-01-07T22:01:13.000000Z",
     "package_name": "phantom_greynoise",
     "main_module": "greynoise_connector.py",
@@ -34,6 +34,16 @@
             "data_type": "numeric",
             "default": 25,
             "order": 2
+        },
+        "license_type": {
+            "description": "GreyNoise license type",
+            "data_type": "string",
+            "value_list": [
+                "enterprise",
+                "community"
+            ],
+            "default": "enterprise",
+            "order": 3
         }
     },
     "actions": [
@@ -86,7 +96,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.code_meaning",
+                    "data_path": "action_result.data.*.code_message",
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
@@ -95,6 +105,14 @@
                 },
                 {
                     "data_path": "action_result.data.*.noise",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.riot",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -584,7 +602,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.code_meaning",
+                    "data_path": "action_result.data.*.code_message",
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
@@ -599,6 +617,14 @@
                         false
                     ]
                 },
+                {
+                    "data_path": "action_result.data.*.riot",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },                
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
@@ -753,6 +779,11 @@
             "versions": "EQ(*)"
         }
     ],
+    "pip3_dependencies": {
+	"pypi": [
+	    {"module": "greynoise"}
+	]
+    },
     "pip_dependencies": {
         "wheel": [
             {

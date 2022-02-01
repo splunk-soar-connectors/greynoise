@@ -17,7 +17,7 @@ def _parse_data(data, param):
             for item in data:
                 res['ip'] = item['ip']
                 res['noise'] = item['noise']
-                res['code_meaning'] = item['code_meaning']
+                res['code_message'] = item['code_message']
                 res['visualization'] = item['visualization']
         # parsing data for community action
         elif 'ip' in param.keys() and (("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
@@ -62,6 +62,7 @@ def _parse_data(data, param):
                     res['last_updated'] = item['last_updated']
                     res['trust_level'] = item['trust_level']
                     res['reference'] = item['reference']
+                    res['visualization'] = item['visualization']
         # parsing data for lookup ips action
         elif 'ips' in param.keys():
             ip_return_list = []
@@ -69,7 +70,7 @@ def _parse_data(data, param):
             for item in data[0]:
                 temp_dict['ip'] = item['ip']
                 temp_dict['noise'] = item['noise']
-                temp_dict['code_meaning'] = item['code_meaning']
+                temp_dict['code_message'] = item['code_message']
                 temp_dict['visualization'] = item['visualization']
                 ip_return_list.append(temp_dict.copy())
             res['lookup_ips'] = ip_return_list
@@ -97,6 +98,9 @@ def _parse_data(data, param):
                     if item['metadata']['city']:
                         res['city'] = item['metadata']['city']
                     res['tags'] = item['tags']
+                    res['viz_tags'] = ", ".join(item['tags'])
+                    res['cve'] = ", ".join(item['cve'])
+
         # parsing data for gnql query
         elif 'query' in param.keys():
             gnql_list = []
@@ -119,6 +123,8 @@ def _parse_data(data, param):
                     if item['metadata']['city']:
                         temp_dict['city'] = item['metadata']['city']
                     temp_dict['tags'] = item['tags']
+                    temp_dict['viz_tags'] = ", ".join(item['tags'])
+                    temp_dict['cve'] = ", ".join(item['cve'])
                     gnql_list.append(temp_dict.copy())
                 res['gnql_query'] = gnql_list
                 res['message'] = "results"
