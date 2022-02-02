@@ -15,7 +15,6 @@ from greynoise_consts import *
 from datetime import datetime
 import requests
 import json
-from requests.utils import requote_uri
 from six.moves.urllib.parse import urljoin as _urljoin
 import urllib.parse
 import ipaddress
@@ -34,7 +33,7 @@ class GreyNoiseConnector(BaseConnector):
         self._session = None
         self._app_version = None
         self._api_key = None
-        self.integration_name = "splunk-soar-v2.5.0"
+        self._integration_name = "splunk-soar-v2.5.0"
 
     def _get_error_message_from_exception(self, e):
         """This method is used to get appropriate error messages from the exception.
@@ -89,7 +88,6 @@ class GreyNoiseConnector(BaseConnector):
                     ),
                     None,
                 )
-
             if parameter < 0:
                 return (
                     action_result.set_status(
@@ -219,133 +217,164 @@ class GreyNoiseConnector(BaseConnector):
 
         return license_type, message
 
+    def _greynoise_quick_ip(self, ip, action_result, session):
+
+        query_success = True
+
+        try:
+            result_data = session.quick(ip)
+        except:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        # format data for quick lookup for visualizer
+        result_data = result_data[0]
+        action_result.add_data(result_data)
+        message = "IP Lookup action successfully completed"
+
+        try:
+            result_data["visualization"] = VISUALIZATION_URL.format(
+                ip=result_data["ip"]
+            )
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _greynoise_riot_ip(self, ip, action_result, session):
+
+        query_success = True
+
+        try:
+            result_data = session.riot(ip)
+        except:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "RIOT Lookup IP action successfully completed"
+
+        try:
+            result_data["visualization"] = VISUALIZATION_URL.format(
+                ip=result_data["ip"]
+            )
+            if result_data["riot"] is False:
+                result_data["riot_unseen"] = True
+            if "trust_level" in result_data.keys():
+                if str(result_data["trust_level"]) in TRUST_LEVELS:
+                    result_data["trust_level"] = TRUST_LEVELS[str(result_data["trust_level"])]
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _greynoise_noise_ip(self, ip, action_result, session):
+
+        query_success = True
+
+        print(ip)
+
+        try:
+            result_data = session.ip(ip)
+        except:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "IP reputation action successfully completed"
+
+        try:
+            result_data["visualization"] = VISUALIZATION_URL.format(
+                ip=result_data["ip"]
+            )
+            if result_data["seen"] is False:
+                result_data["unseen_rep"] = True
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _greynoise_multi_ip(self, ip, action_result, session):
+        # remove any spaces before querying
+        ip = ip.replace(" ", "")
+
+        query_success = True
+
+        try:
+            result_data = session.quick(ip)
+        except:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "Lookup IPs action successfully completed"
+
+        try:
+            for i in result_data:
+                i["visualization"] = VISUALIZATION_URL.format(
+                    ip=i["ip"]
+                )
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _greynoise_community_ip(self, ip, action_result, session):
+
+        query_success = True
+
+        try:
+            result_data = session.ip(ip)
+        except:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "Lookup IPs action successfully completed"
+
+        try:
+            result_data["visualization"] = VISUALIZATION_URL.format(
+                ip=result_data["ip"]
+            )
+            if result_data["riot"] is False and result_data['noise'] is False:
+                result_data["community_not_found"] = True
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
     def _query_greynoise_ip(self, ip, query_type, action_result):
 
-        error_message = "Error occurred making API request"
-        internal_ip_error_message = "Error occured, IP is an internal IP"
-        api_parse_error_message = "Error occurred while processing API response"
-
-        session = GreyNoise(api_key=self._api_key, integration_name=self.integration_name)
-        query_success = True
-        message = ""
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
 
         # check to see if it's an internal IP address
-        if(ipaddress.ip_address(ip).is_private):
+        if(query_type != "multi" and ipaddress.ip_address(ip).is_private):
             query_success = False
             message = "Internal IP"
-            return action_result, query_success, internal_ip_error_message     
+            return action_result, query_success, internal_ip_error_message
 
         # if it's not an internal IP format the query for the type of data
         if query_type == "quick":
+            action_result, query_success, message = self._greynoise_quick_ip(ip, action_result, session)
 
-            try:
-                result_data = session.quick(ip)
-            except:
-                query_success = False
-                return action_result, query_success, error_message
-
-            # format data for quick lookup for visualizer
-            result_data = result_data[0]
-            action_result.add_data(result_data)
-            message = "IP Lookup action successfully completed"
-
-            try:
-                result_data["visualization"] = VISUALIZATION_URL.format(
-                    ip=result_data["ip"]
-            )
-            except KeyError:
-                query_success = False
-                return action_result, query_success, api_parse_error_message
-            
         elif query_type == "riot":
-            try:
-                result_data = session.riot(ip)
-            except:
-                query_success = False
-                return action_result, query_success, error_message
-
-            action_result.add_data(result_data)
-            message = "RIOT Lookup IP action successfully completed"
-
-            try:
-                result_data["visualization"] = VISUALIZATION_URL.format(
-                    ip=result_data["ip"]
-                )
-                if result_data["riot"] is False:
-                    result_data["riot_unseen"] = True
-                if "trust_level" in result_data.keys():
-                    if str(result_data["trust_level"]) in TRUST_LEVELS:
-                        result_data["trust_level"] = TRUST_LEVELS[str(result_data["trust_level"])]
-            except KeyError:
-                query_success = False
-                return action_result, query_success, api_parse_error_message
+            action_result, query_success, message = self._greynoise_riot_ip(ip, action_result, session)
 
         elif query_type == "noise":
-            try:
-                result_data = session.ip(ip)
-            except:
-                query_success = False
-                return action_result, query_success, error_message
-
-            
-            action_result.add_data(result_data)
-            message = "IP reputation action successfully completed"
-
-            try:
-                result_data["visualization"] = VISUALIZATION_URL.format(
-                    ip=result_data["ip"]
-                )
-                if result_data["seen"] is False:
-                    result_data["unseen_rep"] = True
-            except KeyError:
-                query_success = False
-                return action_result, query_success, api_parse_error_message
+            action_result, query_success, message = self._greynoise_noise_ip(ip, action_result, session)
 
         elif query_type == "multi":
-            # remove any spaces before querying
-            ip = ip.replace(" ", "")
-
-            try:
-                result_data = session.quick(ip)
-            except:
-                query_success = False
-                return action_result, query_success, error_message
-            
-            action_result.add_data(result_data)
-            message = "Lookup IPs action successfully completed"
-
-            try:
-                for i in result_data:
-                    i["visualization"] = VISUALIZATION_URL.format(
-                        ip=i["ip"]
-                    )
-            except KeyError:
-                query_success = False
-                return action_result, query_success, api_parse_error_message
+            action_result, query_success, message = self._greynoise_multi_ip(ip, action_result, session)
 
         elif query_type == "community":
+            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community")
+            action_result, query_success, message = self._greynoise_community_ip(ip, action_result, session)
 
-            session = GreyNoise(api_key=self._api_key, integration_name=self.integration_name, offering="community")
-            
-            try:
-                result_data = session.ip(ip)
-            except:
-                query_success = False
-                return action_result, query_success, error_message
-            
-            action_result.add_data(result_data)
-            message = "Lookup IPs action successfully completed"
-
-            try:
-                result_data["visualization"] = VISUALIZATION_URL.format(
-                    ip=result_data["ip"]
-                )
-                if result_data["riot"] is False and result_data['noise'] is False:
-                    result_data["community_not_found"] = True
-            except KeyError:
-                query_success = False
-                return action_result, query_success, api_parse_error_message
-        
         return action_result, query_success, message
 
     def _test_connectivity(self, param):
@@ -380,7 +409,7 @@ class GreyNoiseConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, message)
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "riot", action_result)
-        
+
         if(query_result):
             return action_result.set_status(phantom.APP_SUCCESS, message)
         else:
@@ -390,9 +419,7 @@ class GreyNoiseConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        #if(license_type == "community"):
-        #    return action_result.set_status(phantom.APP_ERROR, message)
-        
+
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "community", action_result)
 
         if(query_result):
@@ -406,7 +433,7 @@ class GreyNoiseConnector(BaseConnector):
         license_type, message = self._check_license_type()
         if(license_type == "community"):
             return action_result.set_status(phantom.APP_ERROR, message)
-        
+
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "noise", action_result)
 
         if(query_result):
@@ -422,12 +449,12 @@ class GreyNoiseConnector(BaseConnector):
         if(license_type == "community"):
             return action_result.set_status(phantom.APP_ERROR, message)
 
-        session = GreyNoise(api_key=self._api_key, integration_name=self.integration_name)
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         query_results = []
 
         # make the initial query and add it to the query_results dict
         results = session.query(param["query"])
-        
+
         if is_poll:
             query_results.append(results["data"])
 
@@ -477,17 +504,16 @@ class GreyNoiseConnector(BaseConnector):
                 else:
                     return action_result.set_status(phantom.APP_ERROR, error_msg)
 
-
             return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
     def _lookup_ips(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        
+
         license_type, message = self._check_license_type()
         if(license_type == "community"):
             return action_result.set_status(phantom.APP_ERROR, message)
 
-        result_data, query_result = self._query_greynoise_ip(param["ips"], "multi", action_result)
+        result_data, query_result, message = self._query_greynoise_ip(param["ips"], "multi", action_result)
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 
@@ -522,7 +548,7 @@ class GreyNoiseConnector(BaseConnector):
             )
 
         query_results = self._gnql_query(param, is_poll=True, action_result=action_result)
-        
+
         self.save_progress("Creating containers")
         for i in query_results[0][-int(param["size"]):]:
             container = {}
@@ -547,8 +573,8 @@ class GreyNoiseConnector(BaseConnector):
                 'name': 'Observed Details',
                 'severity': container_severity,
                 'container_id': cid
-                }]
-                
+            }]
+
             create_artifact_status, create_artifact_msg, _ = self.save_artifacts(artifact)
             if phantom.is_fail(create_artifact_status):
                 self.save_progress("Error saving artifact: {}".format(create_artifact_msg))

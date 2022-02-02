@@ -573,9 +573,7 @@
                 "ips": {
                     "description": "IPs to query, comma-separated list allowed",
                     "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
+                    "contains": [],
                     "primary": true,
                     "required": true,
                     "allow_list": true,
