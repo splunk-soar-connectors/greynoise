@@ -5,19 +5,20 @@
 # Python 3 Compatibility imports
 from __future__ import print_function, unicode_literals
 
+import ipaddress
+import json
+import urllib.parse
+from datetime import datetime
+
 # Phantom App imports
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+from six.moves.urllib.parse import urljoin as _urljoin
 
 from greynoise import GreyNoise
 from greynoise_consts import *
-from datetime import datetime
-import requests
-import json
-from six.moves.urllib.parse import urljoin as _urljoin
-import urllib.parse
-import ipaddress
 
 
 def urljoin(base, url):
@@ -645,8 +646,9 @@ class GreyNoiseConnector(BaseConnector):
 
 if __name__ == "__main__":
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
