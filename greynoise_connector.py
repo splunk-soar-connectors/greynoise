@@ -1,6 +1,15 @@
 # File: greynoise_connector.py
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 
 # Python 3 Compatibility imports
 from __future__ import print_function, unicode_literals
@@ -53,7 +62,7 @@ class GreyNoiseConnector(BaseConnector):
             else:
                 error_code = ERR_CODE_MSG
                 error_msg = ERR_MSG_UNAVAILABLE
-        except:
+        except Exception:
             error_code = ERR_CODE_MSG
             error_msg = ERR_MSG_UNAVAILABLE
 
@@ -64,7 +73,7 @@ class GreyNoiseConnector(BaseConnector):
                 error_text = "Error Code: {0}. Error Message: {1}".format(
                     error_code, error_msg
                 )
-        except:
+        except Exception:
             self.debug_print(PARSE_ERR_MSG)
             error_text = PARSE_ERR_MSG
 
@@ -82,7 +91,7 @@ class GreyNoiseConnector(BaseConnector):
                     )
 
                 parameter = int(parameter)
-            except:
+            except Exception:
                 return (
                     action_result.set_status(
                         phantom.APP_ERROR, VALID_INTEGER_MSG.format(key=key)
@@ -205,7 +214,7 @@ class GreyNoiseConnector(BaseConnector):
             self.save_progress("Invalid response from API")
             try:
                 response_json = json.dumps(response_json)
-            except:
+            except Exception:
                 return action_result.set_status(
                     phantom.APP_ERROR, "Invalid response from API"
                 )
@@ -232,7 +241,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.quick(ip)
-        except:
+        except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
@@ -257,7 +266,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.riot(ip)
-        except:
+        except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
@@ -287,7 +296,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.ip(ip)
-        except:
+        except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
@@ -314,7 +323,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.quick(ip)
-        except:
+        except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
@@ -338,7 +347,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.ip(ip)
-        except:
+        except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
