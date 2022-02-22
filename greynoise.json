@@ -10,12 +10,13 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "GreyNoise",
-    "license": "Copyright (c) GreyNoise, 2022",
+    "license": "Copyright (c) GreyNoise, 2021-2022",
     "app_version": "2.2.0",
     "utctime_updated": "2022-01-07T22:01:13.000000Z",
     "package_name": "phantom_greynoise",
     "main_module": "greynoise_connector.py",
     "min_phantom_version": "5.1.0",
+    "fips_compliant": false,
     "configuration": {
         "api_key": {
             "description": "API Key for GreyNoise",
@@ -195,13 +196,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Public DNS"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
                     "example_values": [
@@ -227,6 +221,13 @@
                     "data_type": "string",
                     "example_values": [
                         "https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Public DNS"
                     ]
                 },
                 {
@@ -305,11 +306,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.seen",
-                    "data_type": "boolean",
+                    "data_path": "action_result.data.*.actor",
+                    "data_type": "string",
                     "example_values": [
-                        true,
-                        false
+                        "Shodan.io"
                     ]
                 },
                 {
@@ -335,21 +335,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.actor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Shodan.io"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tags.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "Mirai",
-                        "Telnet Worm"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.metadata.*",
                     "data_type": "string",
                     "example_values": [
@@ -361,6 +346,22 @@
                     "data_type": "string",
                     "example_values": [
                         "{\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.seen",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.tags.*",
+                    "data_type": "string",
+                    "example_values": [
+                        "Mirai",
+                        "Telnet Worm"
                     ]
                 },
                 {
@@ -422,7 +423,6 @@
                 "size": {
                     "description": "The number of results to return (warning: returning over 1000 results may degrade widget performance)",
                     "data_type": "numeric",
-                    "primary": true,
                     "required": true,
                     "default": 100,
                     "order": 1
@@ -448,21 +448,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.ip",
+                    "data_path": "action_result.data.*.actor",
                     "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
                     "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.seen",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
+                        "Shodan.io"
                     ]
                 },
                 {
@@ -481,25 +470,20 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "example_values": [
+                        "71.6.135.131"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.last_seen",
                     "data_type": "string",
                     "example_values": [
                         "2020-12-25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.actor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Shodan.io"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tags.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "Mirai",
-                        "Telnet Worm"
                     ]
                 },
                 {
@@ -517,11 +501,19 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.complete",
+                    "data_path": "action_result.data.*.seen",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.tags.*",
                     "data_type": "string",
                     "example_values": [
-                        "true",
-                        "false"
+                        "Mirai",
+                        "Telnet Worm"
                     ]
                 },
                 {
@@ -573,8 +565,6 @@
                 "ips": {
                     "description": "IPs to query, comma-separated list allowed",
                     "data_type": "string",
-                    "contains": [],
-                    "primary": true,
                     "required": true,
                     "allow_list": true,
                     "order": 0
@@ -622,7 +612,7 @@
                         true,
                         false
                     ]
-                },                
+                },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
@@ -710,10 +700,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.data.*.last_seen",
                     "data_type": "string",
                     "example_values": [
-                        "Cloudflare"
+                        "2020-01-01"
                     ]
                 },
                 {
@@ -724,18 +714,18 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.last_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-01-01"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
                         "Success",
                         "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://greynoise.io/pricing."
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Cloudflare"
                     ]
                 },
                 {
@@ -778,9 +768,32 @@
         }
     ],
     "pip3_dependencies": {
-	"pypi": [
-	    {"module": "greynoise"}
-	]
+        "wheel": [
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "six",
+                "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            }
+        ]
     },
     "pip_dependencies": {
         "wheel": [
@@ -807,6 +820,34 @@
             {
                 "module": "urllib3",
                 "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+            }
+        ]
+    },
+    "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "six",
+                "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
             }
         ]
     }
