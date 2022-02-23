@@ -12,7 +12,7 @@
 # and limitations under the License.)
 
 # URLs
-API_KEY_CHECK_URL = "https://api.greynoise.io/ping"
+API_KEY_CHECK_URL = "https://api.greynoise.io/ping"  # pragma: allowlist secret
 VISUALIZATION_URL = "https://www.greynoise.io/viz/ip/{ip}"
 
 TRUST_LEVELS = {

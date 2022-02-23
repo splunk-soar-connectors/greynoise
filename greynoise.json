@@ -770,6 +770,22 @@
     "pip3_dependencies": {
         "wheel": [
             {
+                "module": "Jinja2",
+                "input_file": "wheels/py3/Jinja2-3.0.3-py3-none-any.whl"
+            },
+            {
+                "module": "MarkupSafe",
+                "input_file": "wheels/py36/MarkupSafe-2.0.1-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+            },
+            {
+                "module": "ansimarkup",
+                "input_file": "wheels/shared/ansimarkup-1.5.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "cachetools",
+                "input_file": "wheels/py3/cachetools-4.2.4-py3-none-any.whl"
+            },
+            {
                 "module": "certifi",
                 "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
             },
@@ -778,8 +794,44 @@
                 "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
             },
             {
+                "module": "click",
+                "input_file": "wheels/py3/click-8.0.4-py3-none-any.whl"
+            },
+            {
+                "module": "click_default_group",
+                "input_file": "wheels/py3/click_default_group-1.2.2-py3-none-any.whl"
+            },
+            {
+                "module": "click_repl",
+                "input_file": "wheels/py3/click_repl-0.2.0-py3-none-any.whl"
+            },
+            {
+                "module": "colorama",
+                "input_file": "wheels/shared/colorama-0.4.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "dict2xml",
+                "input_file": "wheels/py3/dict2xml-1.7.1-py3-none-any.whl"
+            },
+            {
+                "module": "greynoise",
+                "input_file": "wheels/py3/greynoise-1.2.0-py3-none-any.whl"
+            },
+            {
                 "module": "idna",
                 "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "importlib_metadata",
+                "input_file": "wheels/py3/importlib_metadata-4.8.3-py3-none-any.whl"
+            },
+            {
+                "module": "more_itertools",
+                "input_file": "wheels/py3/more_itertools-8.12.0-py3-none-any.whl"
+            },
+            {
+                "module": "prompt_toolkit",
+                "input_file": "wheels/py3/prompt_toolkit-3.0.28-py3-none-any.whl"
             },
             {
                 "module": "requests",
@@ -790,8 +842,24 @@
                 "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
             },
             {
+                "module": "structlog",
+                "input_file": "wheels/py3/structlog-21.5.0-py3-none-any.whl"
+            },
+            {
+                "module": "typing_extensions",
+                "input_file": "wheels/py3/typing_extensions-4.1.1-py3-none-any.whl"
+            },
+            {
                 "module": "urllib3",
                 "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "wcwidth",
+                "input_file": "wheels/shared/wcwidth-0.2.5-py2.py3-none-any.whl"
+            },
+            {
+                "module": "zipp",
+                "input_file": "wheels/py3/zipp-3.6.0-py3-none-any.whl"
             }
         ]
     },
@@ -826,6 +894,22 @@
     "pip39_dependencies": {
         "wheel": [
             {
+                "module": "Jinja2",
+                "input_file": "wheels/py3/Jinja2-3.0.3-py3-none-any.whl"
+            },
+            {
+                "module": "MarkupSafe",
+                "input_file": "wheels/py39/MarkupSafe-2.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+            },
+            {
+                "module": "ansimarkup",
+                "input_file": "wheels/shared/ansimarkup-1.5.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "cachetools",
+                "input_file": "wheels/py3/cachetools-5.0.0-py3-none-any.whl"
+            },
+            {
                 "module": "certifi",
                 "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
             },
@@ -834,8 +918,40 @@
                 "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
             },
             {
+                "module": "click",
+                "input_file": "wheels/py3/click-8.0.4-py3-none-any.whl"
+            },
+            {
+                "module": "click_default_group",
+                "input_file": "wheels/py3/click_default_group-1.2.2-py3-none-any.whl"
+            },
+            {
+                "module": "click_repl",
+                "input_file": "wheels/py3/click_repl-0.2.0-py3-none-any.whl"
+            },
+            {
+                "module": "colorama",
+                "input_file": "wheels/shared/colorama-0.4.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "dict2xml",
+                "input_file": "wheels/py3/dict2xml-1.7.1-py3-none-any.whl"
+            },
+            {
+                "module": "greynoise",
+                "input_file": "wheels/py3/greynoise-1.2.0-py3-none-any.whl"
+            },
+            {
                 "module": "idna",
                 "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "more_itertools",
+                "input_file": "wheels/py3/more_itertools-8.12.0-py3-none-any.whl"
+            },
+            {
+                "module": "prompt_toolkit",
+                "input_file": "wheels/py3/prompt_toolkit-3.0.28-py3-none-any.whl"
             },
             {
                 "module": "requests",
@@ -846,8 +962,16 @@
                 "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
             },
             {
+                "module": "structlog",
+                "input_file": "wheels/py3/structlog-21.5.0-py3-none-any.whl"
+            },
+            {
                 "module": "urllib3",
                 "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "wcwidth",
+                "input_file": "wheels/shared/wcwidth-0.2.5-py2.py3-none-any.whl"
             }
         ]
     }
