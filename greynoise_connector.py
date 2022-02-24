@@ -1,5 +1,7 @@
 # File: greynoise_connector.py
 #
+# Copyright (c) GreyNoise, 2021-2022.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,6 +18,7 @@ from __future__ import print_function, unicode_literals
 
 import ipaddress
 import json
+import os
 import urllib.parse
 from datetime import datetime
 
@@ -46,36 +49,29 @@ class GreyNoiseConnector(BaseConnector):
         self._integration_name = "splunk-soar-v2.2.0"
 
     def _get_error_message_from_exception(self, e):
-        """This method is used to get appropriate error messages from the exception.
+        """
+        Get appropriate error message from the exception.
+
         :param e: Exception object
         :return: error message
         """
+        error_code = None
+        error_msg = ERR_MSG_UNAVAILABLE
 
         try:
-            if e.args:
+            if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = ERR_CODE_MSG
                     error_msg = e.args[0]
-            else:
-                error_code = ERR_CODE_MSG
-                error_msg = ERR_MSG_UNAVAILABLE
-        except Exception:
-            error_code = ERR_CODE_MSG
-            error_msg = ERR_MSG_UNAVAILABLE
+        except:
+            pass
 
-        try:
-            if error_code in ERR_CODE_MSG:
-                error_text = "Error Message: {0}".format(error_msg)
-            else:
-                error_text = "Error Code: {0}. Error Message: {1}".format(
-                    error_code, error_msg
-                )
-        except Exception:
-            self.debug_print(PARSE_ERR_MSG)
-            error_text = PARSE_ERR_MSG
+        if not error_code:
+            error_text = "Error Message: {}".format(error_msg)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
 
         return error_text
 
@@ -241,12 +237,13 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             result_data = session.quick(ip)
+            result_data = result_data[0]
         except Exception:
             query_success = False
             return action_result, query_success, ERROR_MESSAGE
 
         # format data for quick lookup for visualizer
-        result_data = result_data[0]
+
         action_result.add_data(result_data)
         message = "IP Lookup action successfully completed"
 
@@ -496,7 +493,11 @@ class GreyNoiseConnector(BaseConnector):
             full_response = query_results[0]
 
             # check the number of results to return
-            item_size = int(param["size"])
+            ret_val, item_size = self._validate_integer(
+                action_result,param["size"] , SIZE_ACTION_PARAM
+            )
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
 
             if(full_response["count"] <= item_size):
                 action_result.add_data(full_response)
@@ -630,6 +631,12 @@ class GreyNoiseConnector(BaseConnector):
     def initialize(self):
         """Initialize the Phantom integration."""
         self._state = self.load_state()
+
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+            return self.set_status(phantom.APP_ERROR, GREYNOISE_STATE_FILE_CORRUPT_ERR)
+
         config = self.get_config()
 
         self._api_key = config["api_key"]
@@ -643,6 +650,13 @@ class GreyNoiseConnector(BaseConnector):
                 self._app_version
             ),
         }
+
+        self._proxies = {}
+        if 'HTTP_PROXY' in os.environ:
+            self._proxies['http'] = os.environ.get('HTTP_PROXY')
+
+        if 'HTTPS_PROXY' in os.environ:
+            self._proxies['https'] = os.environ.get('HTTPS_PROXY')
 
         return phantom.APP_SUCCESS
 
