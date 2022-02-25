@@ -574,9 +574,6 @@
                 {
                     "data_path": "action_result.parameter.ips",
                     "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
                     "example_values": [
                         "71.6.135.131,111.111.111.111"
                     ]
