@@ -105,23 +105,31 @@ class GreyNoiseConnector(BaseConnector):
 
         return phantom.APP_SUCCESS, parameter
 
-    def _filter_comma_seperated_fields(self, action_result, field, key):
+    def _validate_comma_sparated_ips(self, action_result, field, key):
         """
-        Filter the comma seperated values in the field. This method operates in 3 steps:
+        Validate the comma separated ips. This method operates in 4 steps:
         1. Get list with comma as the seperator
         2. Filter empty values from the list
-        3. Re-create the string with non-empty values.
+        3. Validate the non-empty ip value
+        4. Re-create the string with non-empty values.
         :param action_result: Action result object
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, filtered string or None in case of failure
         """
         if field:
             fields_list = [value.strip() for value in field.split(',') if value.strip()]
+            for value in field.split(','):
+                if value.strip():
+                    value = value.strip()
+                    if not self._is_ip(value):
+                        return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_IP.format(ip=value)), None
+                    fields_list.append(value)
+
             if not fields_list:
                 return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_FIELDS.format(field=key)), None
             return phantom.APP_SUCCESS, ','.join(fields_list)
         return phantom.APP_SUCCESS, field
 
-    def _is_ipv6(self, input_ip_address):
+    def _is_ip(self, input_ip_address):
         """ Function that checks given address and returns True if the address is a valid IPV6 address.
         :param input_ip_address: IP address
         :return: status (success/failure)
@@ -399,7 +407,7 @@ class GreyNoiseConnector(BaseConnector):
     def _query_greynoise_ip(self, ip, query_type, action_result):
 
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
-        self.debug_print("Session initialize successfully")
+        self.debug_print("Session initialized successfully")
 
         # check to see if it's an internal IP address
         if(query_type != "multi" and ipaddress.ip_address(ip).is_private):
@@ -421,7 +429,8 @@ class GreyNoiseConnector(BaseConnector):
             action_result, query_success, message = self._greynoise_multi_ip(ip, action_result, session)
 
         elif query_type == "community":
-            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community")
+            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community", use_cache = False)
+            self.debug_print("Session initialized successfully")
             action_result, query_success, message = self._greynoise_community_ip(ip, action_result, session)
 
         return action_result, query_success, message
@@ -559,7 +568,7 @@ class GreyNoiseConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, error_msg)
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, "Error occurred while processing the response from server. {}".format(err_msg))
+            return action_result.set_status(phantom.APP_ERROR, err_msg)
 
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
@@ -571,7 +580,9 @@ class GreyNoiseConnector(BaseConnector):
         if(license_type == "community"):
             return action_result.set_status(phantom.APP_ERROR, message)
 
-        ret_val, ips = self._filter_comma_seperated_fields(action_result, param['ips'], 'ips')
+        ret_val, ips = self._validate_comma_sparated_ips(action_result, param['ips'], 'ips')
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         result_data, query_result, message = self._query_greynoise_ip(ips, "multi", action_result)
 
@@ -612,8 +623,11 @@ class GreyNoiseConnector(BaseConnector):
 
         query_results = self._gnql_query(param, is_poll=True, action_result=action_result)
         if isinstance(query_results, bool) and phantom.is_fail(query_results):
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while ingesting data")
+            return action_result.get_status()
+
+        if not query_results:
+            return action_result.set_status(phantom.APP_SUCCESS, "No Data Found")
+
         self.save_progress("Creating containers")
         for i in query_results[0][-int(param["size"]):]:
             container = {}
@@ -689,7 +703,7 @@ class GreyNoiseConnector(BaseConnector):
         app_json = self.get_app_json()
         self._app_version = app_json["app_version"]
 
-        self.set_validator('ipv6', self._is_ipv6)
+        self.set_validator('ip', self._is_ip)
 
         self._headers = {
             "Accept": "application/json",

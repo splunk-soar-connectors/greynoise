@@ -566,7 +566,6 @@
                     "description": "IPs to query, comma-separated list allowed",
                     "data_type": "string",
                     "required": true,
-                    "allow_list": true,
                     "order": 0
                 }
             },
