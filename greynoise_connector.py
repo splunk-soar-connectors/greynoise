@@ -429,7 +429,7 @@ class GreyNoiseConnector(BaseConnector):
             action_result, query_success, message = self._greynoise_multi_ip(ip, action_result, session)
 
         elif query_type == "community":
-            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community", use_cache = False)
+            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community")
             self.debug_print("Session initialized successfully")
             action_result, query_success, message = self._greynoise_community_ip(ip, action_result, session)
 
