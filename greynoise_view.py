@@ -178,6 +178,6 @@ def report(provides, all_app_runs, context):
                 if ctx_result:
                     context["results"].append(ctx_result)
 
-            return "greynoise_view_reports.html"
+        return "greynoise_view_reports.html"
     except Exception as err:
         logger.warning('Error in report: %s' % str(err))
