@@ -1,6 +1,6 @@
 # File: greynoise_consts.py
 #
-# Copyright (c) GreyNoise, 2021-2022.
+# Copyright (c) GreyNoise, 2019-2022.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ API_KEY_CHECK_URL = "https://api.greynoise.io/ping"  # pragma: allowlist secret
 VISUALIZATION_URL = "https://www.greynoise.io/viz/ip/{ip}"
 GREYNOISE_ACTION_HANDLER_MSG = "In action handler for: {identifier}"
 GREYNOISE_ERR_INVALID_FIELDS = "Please provide a valid value in the '{field}' parameter"
-GREYNOISE_ERR_INVALID_IP = "Validation for ip {ip} failed. Please provide valid ip value."
+GREYNOISE_ERR_INVALID_IP = "Validation failed for IP '{ip}'"
 
 TRUST_LEVELS = {
     "1": "1 - Reasonably Ignore",

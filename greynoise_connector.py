@@ -1,6 +1,6 @@
 # File: greynoise_connector.py
 #
-# Copyright (c) GreyNoise, 2021-2022.
+# Copyright (c) GreyNoise, 2019-2022.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -105,32 +105,39 @@ class GreyNoiseConnector(BaseConnector):
 
         return phantom.APP_SUCCESS, parameter
 
-    def _validate_comma_sparated_ips(self, action_result, field, key):
+    def _validate_comma_separated_ips(self, action_result, field, key):
         """
         Validate the comma separated ips. This method operates in 4 steps:
-        1. Get list with comma as the seperator
-        2. Filter empty values from the list
-        3. Validate the non-empty ip value
+        1. Get list with comma as the seperator.
+        2. Filter empty values from the list.
+        3. Validate the non-empty IP values.
         4. Re-create the string with non-empty values.
+
         :param action_result: Action result object
+        :param field: input field
+        :param key: input parameter message key
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, filtered string or None in case of failure
         """
         if field:
-            fields_list = [value.strip() for value in field.split(',') if value.strip()]
-            for value in field.split(','):
-                if value.strip():
-                    value = value.strip()
-                    if not self._is_ip(value):
-                        return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_IP.format(ip=value)), None
-                    fields_list.append(value)
+            fields_list = field.split(',').strip()
+            filtered_fields_list = []
+            for value in fields_list:
+                value = value.strip()
+                if value:
+                    if not self._is_valid_ip(value):
+                        error_msg = "{}. {}".format(GREYNOISE_ERR_INVALID_IP.format(ip=value), GREYNOISE_ERR_INVALID_FIELDS.format(field=key))
+                        return action_result.set_status(phantom.APP_ERROR, error_msg), None
+                    filtered_fields_list.append(value)
 
-            if not fields_list:
+            if not filtered_fields_list:
                 return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_FIELDS.format(field=key)), None
-            return phantom.APP_SUCCESS, ','.join(fields_list)
+            return phantom.APP_SUCCESS, ','.join(filtered_fields_list)
         return phantom.APP_SUCCESS, field
 
-    def _is_ip(self, input_ip_address):
-        """ Function that checks given address and returns True if the address is a valid IPV6 address.
+    def _is_valid_ip(self, input_ip_address):
+        """
+        Function that checks given address and returns True if the address is a valid IP address.
+
         :param input_ip_address: IP address
         :return: status (success/failure)
         """
@@ -580,7 +587,7 @@ class GreyNoiseConnector(BaseConnector):
         if(license_type == "community"):
             return action_result.set_status(phantom.APP_ERROR, message)
 
-        ret_val, ips = self._validate_comma_sparated_ips(action_result, param['ips'], 'ips')
+        ret_val, ips = self._validate_comma_separated_ips(action_result, param['ips'], 'ips')
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -703,7 +710,7 @@ class GreyNoiseConnector(BaseConnector):
         app_json = self.get_app_json()
         self._app_version = app_json["app_version"]
 
-        self.set_validator('ip', self._is_ip)
+        self.set_validator('ip', self._is_valid_ip)
 
         self._headers = {
             "Accept": "application/json",
