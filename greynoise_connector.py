@@ -119,7 +119,7 @@ class GreyNoiseConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, filtered string or None in case of failure
         """
         if field:
-            fields_list = field.split(',').strip()
+            fields_list = field.split(',')
             filtered_fields_list = []
             for value in fields_list:
                 value = value.strip()
@@ -575,7 +575,7 @@ class GreyNoiseConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, error_msg)
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, err_msg)
+            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
 
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
