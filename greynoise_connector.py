@@ -177,6 +177,8 @@ class GreyNoiseConnector(BaseConnector):
         except requests.exceptions.HTTPError as e:
             err_msg = self._get_error_message_from_exception(e)
             err_msg = urllib.parse.unquote(err_msg)
+            if self._api_key in err_msg:
+                err_msg = err_msg.replace(self._api_key, "*****")
             if "404" in err_msg:
                 try:
                     response_json = r.json()
@@ -194,10 +196,14 @@ class GreyNoiseConnector(BaseConnector):
                 )
         except requests.exceptions.ConnectionError as e:
             err_msg = self._get_error_message_from_exception(e)
+            if self._api_key in err_msg:
+                err_msg = err_msg.replace(self._api_key, "******")
             err_msg = 'Error connecting to server. Connection refused from server: {0}'.format(err_msg)
             ret_val = action_result.set_status(phantom.APP_ERROR, err_msg)
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
+            if self._api_key in err_msg:
+                err_msg = err_msg.replace(self._api_key, "******")
             ret_val = action_result.set_status(
                 phantom.APP_ERROR,
                 "General error occurred while making REST call: {0}".format(err_msg),

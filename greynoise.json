@@ -31,7 +31,7 @@
             "order": 1
         },
         "on_poll_size": {
-            "description": "The number of results to return for the on poll action",
+            "description": "The number of results to return for the interval/schedule poll",
             "data_type": "numeric",
             "default": 25,
             "order": 2
@@ -101,7 +101,7 @@
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the GreyNoise sensor network"
+                        "The IP has been observed by the test sensor network"
                     ]
                 },
                 {
@@ -219,8 +219,11 @@
                 {
                     "data_path": "action_result.data.*.logo_url",
                     "data_type": "string",
+                    "contains": [
+                        "url"
+                    ],
                     "example_values": [
-                        "https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
+                        "https://www.testurl.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
                     ]
                 },
                 {
@@ -233,8 +236,11 @@
                 {
                     "data_path": "action_result.data.*.reference",
                     "data_type": "string",
+                    "contains": [
+                        "url"
+                    ],
                     "example_values": [
-                        "https://developers.google.com/speed/public-dns/docs/isp#alternative"
+                        "https://developers.testurl.com/speed/public-dns/docs/isp#alternative"
                     ]
                 },
                 {
@@ -590,7 +596,7 @@
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the GreyNoise sensor network"
+                        "The IP has been observed by the test sensor network"
                     ]
                 },
                 {
@@ -653,7 +659,28 @@
             "type": "ingest",
             "identifier": "on_poll",
             "read_only": true,
-            "parameters": {},
+            "parameters": {
+                "start_time": {
+                    "data_type": "numeric",
+                    "description": "Parameter ignored in this app",
+                    "order": 0
+                },
+                "end_time": {
+                    "data_type": "numeric",
+                    "description": "Parameter ignored in this app",
+                    "order": 1
+                },
+                "container_count": {
+                    "data_type": "numeric",
+                    "description": "Maximum number of results to return for the on poll action",
+                    "order": 2
+                },
+                "artifact_count": {
+                    "data_type": "numeric",
+                    "description": "Parameter ignored in this app",
+                    "order": 3
+                }
+            },
             "output": [],
             "versions": "EQ(*)"
         },
@@ -705,8 +732,11 @@
                 {
                     "data_path": "action_result.data.*.link",
                     "data_type": "string",
+                    "contains": [
+                        "url"
+                    ],
                     "example_values": [
-                        "https://viz.greynoise.io/riot/1.2.3.4"
+                        "https://viz.testurl.io/riot/1.2.3.4"
                     ]
                 },
                 {
@@ -714,14 +744,14 @@
                     "data_type": "string",
                     "example_values": [
                         "Success",
-                        "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://greynoise.io/pricing."
+                        "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://testurl.io/pricing."
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Cloudflare"
+                        "Test"
                     ]
                 },
                 {

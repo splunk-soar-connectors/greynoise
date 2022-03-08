@@ -64,6 +64,7 @@
 
     Notes:
     <ul>
+      <li>The value provided in the configuration parameter "on_poll_size" will only be considered for scheduled or interval polling. For manual polling, the value provided in the "container_count" will be considered.</li>
       <li>The on poll action will spawn a container for each result returned. Phantom performance may be degraded if an overly large query is used.
       <li>Potentially useful queries may include ones that limit results to assets owned by your organization, such as:
       <li>
