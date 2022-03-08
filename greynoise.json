@@ -101,7 +101,7 @@
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the test sensor network"
+                        "The IP has been observed by the GreyNoise sensor network"
                     ]
                 },
                 {
@@ -223,7 +223,7 @@
                         "url"
                     ],
                     "example_values": [
-                        "https://www.testurl.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
+                        "https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
                     ]
                 },
                 {
@@ -240,7 +240,7 @@
                         "url"
                     ],
                     "example_values": [
-                        "https://developers.testurl.com/speed/public-dns/docs/isp#alternative"
+                        "https://developers.google.com/speed/public-dns/docs/isp#alternative"
                     ]
                 },
                 {
@@ -596,7 +596,7 @@
                     "data_type": "string",
                     "example_values": [
                         "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the test sensor network"
+                        "The IP has been observed by the GreyNoise sensor network"
                     ]
                 },
                 {
@@ -736,7 +736,7 @@
                         "url"
                     ],
                     "example_values": [
-                        "https://viz.testurl.io/riot/1.2.3.4"
+                        "https://viz.greynoise.io/riot/1.2.3.4"
                     ]
                 },
                 {
@@ -744,14 +744,14 @@
                     "data_type": "string",
                     "example_values": [
                         "Success",
-                        "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://testurl.io/pricing."
+                        "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://greynoise.io/pricing."
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Test"
+                        "Cloudflare"
                     ]
                 },
                 {
