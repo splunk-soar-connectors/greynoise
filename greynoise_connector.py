@@ -281,7 +281,7 @@ class GreyNoiseConnector(BaseConnector):
         license_type = "enterprise"
         message = "Enterprise license."
 
-        if(config.get("license_type") == "community"):
+        if config.get("license_type") == "community":
             license_type = "community"
             message = "This action cannot be used with the community API. Please check the settings in the GreyNoise app config."
 
@@ -409,7 +409,7 @@ class GreyNoiseConnector(BaseConnector):
             result_data["visualization"] = VISUALIZATION_URL.format(
                 ip=result_data["ip"]
             )
-            if result_data["riot"] is False and result_data['noise'] is False:
+            if not result_data["riot"] and not result_data['noise']:
                 result_data["community_not_found"] = True
         except KeyError:
             query_success = False
@@ -423,7 +423,7 @@ class GreyNoiseConnector(BaseConnector):
         self.debug_print("Session initialized successfully")
 
         # check to see if it's an internal IP address
-        if(query_type != "multi" and ipaddress.ip_address(ip).is_private):
+        if query_type != "multi" and ipaddress.ip_address(ip).is_private:
             query_success = False
             message = "Internal IP"
             return action_result, query_success, INTERNAL_IP_ERROR_MESSAGE
@@ -463,12 +463,12 @@ class GreyNoiseConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        if(license_type == "community"):
+        if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "quick", action_result)
 
-        if(query_result):
+        if query_result:
             return action_result.set_status(phantom.APP_SUCCESS, message)
 
         return action_result.set_status(phantom.APP_ERROR, message)
@@ -478,12 +478,12 @@ class GreyNoiseConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        if(license_type == "community"):
+        if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "riot", action_result)
 
-        if(query_result):
+        if query_result:
             return action_result.set_status(phantom.APP_SUCCESS, message)
 
         return action_result.set_status(phantom.APP_ERROR, message)
@@ -494,7 +494,7 @@ class GreyNoiseConnector(BaseConnector):
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "community", action_result)
 
-        if(query_result):
+        if query_result:
             return action_result.set_status(phantom.APP_SUCCESS, message)
 
         return action_result.set_status(phantom.APP_ERROR, message)
@@ -504,12 +504,12 @@ class GreyNoiseConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        if(license_type == "community"):
+        if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "noise", action_result)
 
-        if(query_result):
+        if query_result:
             return action_result.set_status(phantom.APP_SUCCESS, message)
 
         return action_result.set_status(phantom.APP_ERROR, message)
@@ -520,7 +520,7 @@ class GreyNoiseConnector(BaseConnector):
             action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        if(license_type == "community"):
+        if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
@@ -534,7 +534,7 @@ class GreyNoiseConnector(BaseConnector):
                 query_results.append(results["data"])
 
                 # if necessary add the additional results to the query_results dict
-                while("scroll" in results):
+                while "scroll" in results:
                     results = session.query(param["query"], scroll=param["query"])
                     query_results.append(results["data"])
 
@@ -545,7 +545,7 @@ class GreyNoiseConnector(BaseConnector):
                 query_results.append(results)
 
                 # if necessary add the additional results to the query_results dict
-                while("scroll" in results):
+                while "scroll" in results:
                     results = session.query(param["query"], scroll=param["query"])
                     query_results.append(results["data"])
 
@@ -559,11 +559,11 @@ class GreyNoiseConnector(BaseConnector):
                 if phantom.is_fail(ret_val):
                     return action_result.get_status()
 
-                if(full_response["count"] <= item_size):
+                if full_response["count"] <= item_size:
                     action_result.add_data(full_response)
 
                 # if there are more results than what is requested delete them from the query results
-                if(full_response["count"] > item_size):
+                if full_response["count"] > item_size:
                     temp = []
                     for i in range(item_size):
                         temp.append(full_response["data"][i])
@@ -590,7 +590,7 @@ class GreyNoiseConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
-        if(license_type == "community"):
+        if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
         ret_val, ips = self._validate_comma_separated_ips(action_result, param['ips'], 'ips')
@@ -599,7 +599,7 @@ class GreyNoiseConnector(BaseConnector):
 
         result_data, query_result, message = self._query_greynoise_ip(ips, "multi", action_result)
 
-        if(query_result):
+        if query_result:
             return action_result.set_status(phantom.APP_SUCCESS, message)
 
         return action_result.set_status(phantom.APP_ERROR, message)
@@ -642,14 +642,14 @@ class GreyNoiseConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS, "No Data Found")
 
         self.save_progress("Creating containers")
-        for i in query_results[0][-int(param["size"]):]:
+        for result in query_results[0][-int(param["size"]):]:
             container = {}
-            container["name"] = "GreyNoise Alert - {}".format(i["ip"])
+            container["name"] = "GreyNoise Alert - {}".format(result["ip"])
             # set the severity of the container based on the classification
             container_severity = "low"
-            if i["classification"] == "malicious":
+            if result["classification"] == "malicious":
                 container_severity = "high"
-            elif i["classification"] == "unknown":
+            elif result["classification"] == "unknown":
                 container_severity == "medium"
 
             container["severity"] = container_severity
@@ -661,7 +661,7 @@ class GreyNoiseConnector(BaseConnector):
                 self.debug_print("Error saving container: {} -- CID: {}".format(msg, cid))
 
             artifact = [{
-                'cef': i,
+                'cef': result,
                 'name': 'Observed Details',
                 'severity': container_severity,
                 'container_id': cid
