@@ -19,7 +19,6 @@ from __future__ import print_function, unicode_literals
 import ipaddress
 import json
 import urllib.parse
-from datetime import datetime
 
 # Phantom App imports
 import phantom.app as phantom
@@ -154,125 +153,6 @@ class GreyNoiseConnector(BaseConnector):
             return False
 
         return True
-
-    def get_session(self):
-        if self._session is None:
-            self._session = requests.Session()
-            self._session.params.update({"api-key": self._api_key})
-        return self._session
-
-    def _make_rest_call(
-        self, action_result, method, *args, **kwargs
-    ):
-        error_on_404 = False
-        session = self.get_session()
-
-        response_json = None
-        status_code = None
-        try:
-            r = session.request(method, *args, **kwargs)
-            if r.status_code != 404 or error_on_404:
-                r.raise_for_status()
-            status_code = r.status_code
-        except requests.exceptions.HTTPError as e:
-            err_msg = self._get_error_message_from_exception(e)
-            err_msg = urllib.parse.unquote(err_msg)
-            if self._api_key in err_msg:
-                err_msg = err_msg.replace(self._api_key, "*****")
-            if "404" in err_msg:
-                try:
-                    response_json = r.json()
-                    ret_val = phantom.APP_SUCCESS
-                except Exception as e:
-                    err_msg = self._get_error_message_from_exception(e)
-                    ret_val = action_result.set_status(
-                        phantom.APP_ERROR,
-                        "Unable to parse JSON response. Error: {0}".format(err_msg),
-                    )
-            else:
-                ret_val = action_result.set_status(
-                    phantom.APP_ERROR,
-                    "HTTP error occurred while making REST call: {0}".format(err_msg),
-                )
-        except requests.exceptions.ConnectionError as e:
-            err_msg = self._get_error_message_from_exception(e)
-            if self._api_key in err_msg:
-                err_msg = err_msg.replace(self._api_key, "******")
-            err_msg = 'Error connecting to server. Connection refused from server: {0}'.format(err_msg)
-            ret_val = action_result.set_status(phantom.APP_ERROR, err_msg)
-        except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
-            if self._api_key in err_msg:
-                err_msg = err_msg.replace(self._api_key, "******")
-            ret_val = action_result.set_status(
-                phantom.APP_ERROR,
-                "General error occurred while making REST call: {0}".format(err_msg),
-            )
-        else:
-            try:
-                response_json = r.json()
-                ret_val = phantom.APP_SUCCESS
-            except Exception as e:
-                err_msg = self._get_error_message_from_exception(e)
-                ret_val = action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Unable to parse JSON response. Error: {0}".format(err_msg),
-                )
-
-        return (ret_val, response_json, status_code)
-
-    def _check_apikey(self, action_result):
-        self.save_progress("Testing API key")
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result, "get", API_KEY_CHECK_URL, headers=self._headers)
-
-        if phantom.is_fail(ret_val):
-            self.save_progress("API key check Failed")
-            return ret_val
-
-        license_type = response_json.get("offering")
-        expiration = str(response_json.get("expiration"))
-        try:
-            past = datetime.strptime(expiration, "%Y-%m-%d")
-        except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing response from server. {}".format(self._get_error_message_from_exception(e))
-            )
-        present = datetime.now()
-
-        if response_json is None:
-            self.save_progress("No response from API")
-            return action_result.set_status(phantom.APP_ERROR, "No response from API")
-        elif response_json.get("message") == "pong":
-            if past < present:
-                self.save_progress("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(
-                    license_type=license_type,
-                    expiration=expiration))
-                self.save_progress("Your licence is expired and therefore your API key has community permissions")
-                self.debug_print("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(
-                    license_type=license_type,
-                    expiration=expiration))
-                self.debug_print("Your licence is expired and therefore your API key has community permissions")
-                return phantom.APP_SUCCESS
-            else:
-                self.save_progress("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(
-                    license_type=license_type,
-                    expiration=expiration))
-                self.debug_print("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(
-                    license_type=license_type,
-                    expiration=expiration))
-                return phantom.APP_SUCCESS
-        else:
-            self.save_progress("Invalid response from API")
-            try:
-                response_json = json.dumps(response_json)
-            except Exception:
-                return action_result.set_status(
-                    phantom.APP_ERROR, "Invalid response from API"
-                )
-            return action_result.set_status(
-                phantom.APP_ERROR, "Invalid response from API: %s" % response_json
-            )
 
     # check the config for the type of license to determine which actions can be used
     def _check_license_type(self):
@@ -450,10 +330,16 @@ class GreyNoiseConnector(BaseConnector):
 
     def _test_connectivity(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
+
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        self.debug_print("Session initialized successfully")
+
+        try:
+            results = session.test_connection()
+            self.save_progress("Validated API Key. License type: {}, Expiration: {}".format(results["offering"], results["expiration"]))
+        except Exception:
             self.save_progress("Test Connectivity Failed")
-            return ret_val
+            return action_result.set_status(phantom.APP_ERROR)
 
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
