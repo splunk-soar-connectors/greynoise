@@ -1,6 +1,6 @@
 {
     "appid": "3af2ef2d-6e4a-4e74-8f20-4d6030625561",
-    "name": "GreyNoise",
+    "name": "GreyNoise for SOAR",
     "description": "This app provides investigative capabilities using the GreyNoise plugin",
     "type": "reputation",
     "product_vendor": "GreyNoise",
