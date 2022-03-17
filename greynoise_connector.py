@@ -1,22 +1,34 @@
 # File: greynoise_connector.py
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Copyright (c) GreyNoise, 2019-2022.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 
 # Python 3 Compatibility imports
 from __future__ import print_function, unicode_literals
 
+import ipaddress
+import json
+import urllib.parse
+
 # Phantom App imports
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-from greynoise_consts import *
-from datetime import datetime
 import requests
-import json
-from requests.utils import requote_uri
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 from six.moves.urllib.parse import urljoin as _urljoin
-import urllib.parse
+
+from greynoise import GreyNoise
+from greynoise_consts import *
 
 
 def urljoin(base, url):
@@ -32,38 +44,32 @@ class GreyNoiseConnector(BaseConnector):
         self._session = None
         self._app_version = None
         self._api_key = None
+        self._integration_name = "splunk-soar-v2.2.0"
 
     def _get_error_message_from_exception(self, e):
-        """This method is used to get appropriate error messages from the exception.
+        """
+        Get appropriate error message from the exception.
+
         :param e: Exception object
         :return: error message
         """
+        error_code = None
+        error_msg = ERR_MSG_UNAVAILABLE
 
         try:
-            if e.args:
+            if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = ERR_CODE_MSG
                     error_msg = e.args[0]
-            else:
-                error_code = ERR_CODE_MSG
-                error_msg = ERR_MSG_UNAVAILABLE
         except:
-            error_code = ERR_CODE_MSG
-            error_msg = ERR_MSG_UNAVAILABLE
+            pass
 
-        try:
-            if error_code in ERR_CODE_MSG:
-                error_text = "Error Message: {0}".format(error_msg)
-            else:
-                error_text = "Error Code: {0}. Error Message: {1}".format(
-                    error_code, error_msg
-                )
-        except:
-            self.debug_print(PARSE_ERR_MSG)
-            error_text = PARSE_ERR_MSG
+        if not error_code:
+            error_text = "Error Message: {}".format(error_msg)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
 
         return error_text
 
@@ -79,14 +85,13 @@ class GreyNoiseConnector(BaseConnector):
                     )
 
                 parameter = int(parameter)
-            except:
+            except Exception:
                 return (
                     action_result.set_status(
                         phantom.APP_ERROR, VALID_INTEGER_MSG.format(key=key)
                     ),
                     None,
                 )
-
             if parameter < 0:
                 return (
                     action_result.set_status(
@@ -99,175 +104,107 @@ class GreyNoiseConnector(BaseConnector):
 
         return phantom.APP_SUCCESS, parameter
 
-    def get_session(self):
-        if self._session is None:
-            self._session = requests.Session()
-            self._session.params.update({"api-key": self._api_key})
-        return self._session
+    def _validate_comma_separated_ips(self, action_result, field, key):
+        """
+        Validate the comma separated ips. This method operates in 4 steps:
+        1. Get list with comma as the seperator.
+        2. Filter empty values from the list.
+        3. Validate the non-empty IP values.
+        4. Re-create the string with non-empty values.
 
-    def _make_rest_call(
-        self, action_result, method, *args, **kwargs
-    ):
-        error_on_404 = False
-        session = self.get_session()
+        :param action_result: Action result object
+        :param field: input field
+        :param key: input parameter message key
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, filtered string or None in case of failure
+        """
+        if field:
+            fields_list = field.split(',')
+            filtered_fields_list = []
+            for value in fields_list:
+                value = value.strip()
+                if value:
+                    if not self._is_valid_ip(value):
+                        error_msg = "{}. {}".format(GREYNOISE_ERR_INVALID_IP.format(ip=value), GREYNOISE_ERR_INVALID_FIELDS.format(field=key))
+                        return action_result.set_status(phantom.APP_ERROR, error_msg), None
+                    filtered_fields_list.append(value)
 
-        response_json = None
-        status_code = None
+            if not filtered_fields_list:
+                return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_FIELDS.format(field=key)), None
+            return phantom.APP_SUCCESS, ','.join(filtered_fields_list)
+        return phantom.APP_SUCCESS, field
+
+    def _is_valid_ip(self, input_ip_address):
+        """
+        Function that checks given address and returns True if the address is a valid IP address.
+
+        :param input_ip_address: IP address
+        :return: status (success/failure)
+        """
+
+        ip_address_input = input_ip_address
+
+        # If interface is present in the IP, it will be separated by the %
+        if '%' in input_ip_address:
+            ip_address_input = input_ip_address.split('%')[0]
+
         try:
-            r = session.request(method, *args, **kwargs)
-            if r.status_code != 404 or error_on_404:
-                r.raise_for_status()
-            status_code = r.status_code
-        except requests.exceptions.HTTPError as e:
-            err_msg = self._get_error_message_from_exception(e)
-            err_msg = urllib.parse.unquote(err_msg)
-            if "404" in err_msg:
-                try:
-                    response_json = r.json()
-                    ret_val = phantom.APP_SUCCESS
-                except Exception as e:
-                    err_msg = self._get_error_message_from_exception(e)
-                    ret_val = action_result.set_status(
-                        phantom.APP_ERROR,
-                        "Unable to parse JSON response. Error: {0}".format(err_msg),
-                    )
-            else:
-                ret_val = action_result.set_status(
-                    phantom.APP_ERROR,
-                    "HTTP error occurred while making REST call: {0}".format(err_msg),
-                )
-        except requests.exceptions.ConnectionError:
-            err_msg = 'Error connecting to server. Connection refused from server'
-            ret_val = action_result.set_status(phantom.APP_ERROR, err_msg)
-        except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
-            ret_val = action_result.set_status(
-                phantom.APP_ERROR,
-                "General error occurred while making REST call: {0}".format(err_msg),
-            )
-        else:
-            try:
-                response_json = r.json()
-                ret_val = phantom.APP_SUCCESS
-            except Exception as e:
-                err_msg = self._get_error_message_from_exception(e)
-                ret_val = action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Unable to parse JSON response. Error: {0}".format(err_msg),
-                )
+            ipaddress.ip_address(ip_address_input)
+        except Exception:
+            return False
 
-        return (ret_val, response_json, status_code)
+        return True
 
-    def _check_apikey(self, action_result):
-        self.save_progress("Testing API key")
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result, "get", API_KEY_CHECK_URL, headers=self._headers)
+    # check the config for the type of license to determine which actions can be used
+    def _check_license_type(self):
+        config = self.get_config()
 
-        if phantom.is_fail(ret_val):
-            self.save_progress("API key check Failed")
-            return ret_val
+        license_type = "enterprise"
+        message = "Enterprise license."
 
-        license_type = response_json.get("offering")
-        expiration = str(response_json.get("expiration"))
+        if config.get("license_type") == "community":
+            license_type = "community"
+            message = "This action cannot be used with the community API. Please check the settings in the GreyNoise app config."
+
+        return license_type, message
+
+    def _greynoise_quick_ip(self, ip, action_result, session):
+
+        query_success = True
+
         try:
-            past = datetime.strptime(expiration, "%Y-%m-%d")
-        except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing response from server. {}".format(self._get_error_message_from_exception(e))
-            )
-        present = datetime.now()
+            result_data = session.quick(ip)
+            result_data = result_data[0]
+        except Exception:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
 
-        if response_json is None:
-            self.save_progress("No response from API")
-            return action_result.set_status(phantom.APP_ERROR, "No response from API")
-        elif response_json.get("message") == "pong":
-            if past < present:
-                self.save_progress("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(license_type=license_type, expiration=expiration))
-                self.save_progress("Your licence is expired and therefore your API key has community permissions")
-                self.debug_print("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(license_type=license_type, expiration=expiration))
-                self.debug_print("Your licence is expired and therefore your API key has community permissions")
-                return phantom.APP_SUCCESS
-            else:
-                self.save_progress("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(license_type=license_type, expiration=expiration))
-                self.debug_print("Validated API Key. License type: {license_type}, Expiration: {expiration}".format(license_type=license_type, expiration=expiration))
-                return phantom.APP_SUCCESS
-        else:
-            self.save_progress("Invalid response from API")
-            try:
-                response_json = json.dumps(response_json)
-            except:
-                return action_result.set_status(
-                    phantom.APP_ERROR, "Invalid response from API"
-                )
-            return action_result.set_status(
-                phantom.APP_ERROR, "Invalid response from API: %s" % response_json
-            )
+        # format data for quick lookup for visualizer
 
-    def _test_connectivity(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            self.save_progress("Test Connectivity Failed")
-            return ret_val
-
-        self.save_progress("Test Connectivity Passed")
-        return action_result.set_status(phantom.APP_SUCCESS)
-
-    def _lookup_ip(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            return ret_val
-
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result,
-            "get",
-            LOOKUP_IP_URL.format(ip=param["ip"]),
-            headers=self._headers,
-        )
-        if phantom.is_fail(ret_val):
-            return ret_val
-
-        result_data = {}
         action_result.add_data(result_data)
-
-        result_data.update(response_json)
+        message = "IP Lookup action successfully completed"
 
         try:
             result_data["visualization"] = VISUALIZATION_URL.format(
                 ip=result_data["ip"]
             )
-            if result_data["code"] in CODES:
-                result_data["code_meaning"] = CODES[result_data["code"]]
-            else:
-                result_data["code_meaning"] = "This code is unmapped"
         except KeyError:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing API response"
-            )
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
 
-        return action_result.set_status(phantom.APP_SUCCESS, "IP Lookup action successfully completed")
+        return action_result, query_success, message
 
-    def _riot_lookup_ip(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            return ret_val
+    def _greynoise_riot_ip(self, ip, action_result, session):
 
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result,
-            "get",
-            RIOT_IP_URL.format(ip=param["ip"]),
-            headers=self._headers,
-        )
+        query_success = True
 
-        if phantom.is_fail(ret_val):
-            return ret_val
+        try:
+            result_data = session.riot(ip)
+        except Exception:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
 
-        result_data = {}
         action_result.add_data(result_data)
-
-        result_data.update(response_json)
+        message = "RIOT Lookup IP action successfully completed"
 
         try:
             result_data["visualization"] = VISUALIZATION_URL.format(
@@ -279,65 +216,24 @@ class GreyNoiseConnector(BaseConnector):
                 if str(result_data["trust_level"]) in TRUST_LEVELS:
                     result_data["trust_level"] = TRUST_LEVELS[str(result_data["trust_level"])]
         except KeyError:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing API response"
-            )
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
 
-        return action_result.set_status(phantom.APP_SUCCESS, "RIOT Lookup IP action successfully completed")
+        return action_result, query_success, message
 
-    def _community_lookup_ip(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            return ret_val
+    def _greynoise_noise_ip(self, ip, action_result, session):
 
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result,
-            "get",
-            COMMUNITY_IP_URL.format(ip=param["ip"]),
-            headers=self._headers,
-        )
-
-        if phantom.is_fail(ret_val):
-            return ret_val
-
-        result_data = {}
-        action_result.add_data(result_data)
-
-        result_data.update(response_json)
+        query_success = True
 
         try:
-            result_data["visualization"] = VISUALIZATION_URL.format(
-                ip=result_data["ip"]
-            )
-            if result_data["riot"] is False and result_data['noise'] is False:
-                result_data["community_not_found"] = True
-        except KeyError:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing API response"
-            )
+            result_data = session.ip(ip)
+        except Exception:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Community Lookup IP action successfully completed")
-
-    def _ip_reputation(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            return ret_val
-
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result,
-            "get",
-            IP_REPUTATION_URL.format(ip=param["ip"]),
-            headers=self._headers,
-        )
-        if phantom.is_fail(ret_val):
-            return ret_val
-
-        result_data = {}
         action_result.add_data(result_data)
+        message = "IP reputation action successfully completed"
 
-        result_data.update(response_json)
         try:
             result_data["visualization"] = VISUALIZATION_URL.format(
                 ip=result_data["ip"]
@@ -345,241 +241,260 @@ class GreyNoiseConnector(BaseConnector):
             if result_data["seen"] is False:
                 result_data["unseen_rep"] = True
         except KeyError:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Error occurred while processing API response"
-            )
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
 
-        return action_result.set_status(phantom.APP_SUCCESS, "IP reputation action successfully completed")
+        return action_result, query_success, message
+
+    def _greynoise_multi_ip(self, ip, action_result, session):
+        # remove any spaces before querying
+        ip = ip.replace(" ", "")
+
+        query_success = True
+
+        try:
+            result_data = session.quick(ip)
+        except Exception:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "Lookup IPs action successfully completed"
+
+        try:
+            for i in result_data:
+                i["visualization"] = VISUALIZATION_URL.format(
+                    ip=i["ip"]
+                )
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _greynoise_community_ip(self, ip, action_result, session):
+
+        query_success = True
+
+        try:
+            result_data = session.ip(ip)
+        except Exception:
+            query_success = False
+            return action_result, query_success, ERROR_MESSAGE
+
+        action_result.add_data(result_data)
+        message = "Lookup IPs action successfully completed"
+
+        try:
+            result_data["visualization"] = VISUALIZATION_URL.format(
+                ip=result_data["ip"]
+            )
+            if not result_data["riot"] and not result_data['noise']:
+                result_data["community_not_found"] = True
+        except KeyError:
+            query_success = False
+            return action_result, query_success, API_PARSE_ERROR_MESSAGE
+
+        return action_result, query_success, message
+
+    def _query_greynoise_ip(self, ip, query_type, action_result):
+
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        self.debug_print("Session initialized successfully")
+
+        # check to see if it's an internal IP address
+        if query_type != "multi" and ipaddress.ip_address(ip).is_private:
+            query_success = False
+            message = "Internal IP"
+            return action_result, query_success, INTERNAL_IP_ERROR_MESSAGE
+
+        # if it's not an internal IP format the query for the type of data
+        if query_type == "quick":
+            action_result, query_success, message = self._greynoise_quick_ip(ip, action_result, session)
+
+        elif query_type == "riot":
+            action_result, query_success, message = self._greynoise_riot_ip(ip, action_result, session)
+
+        elif query_type == "noise":
+            action_result, query_success, message = self._greynoise_noise_ip(ip, action_result, session)
+
+        elif query_type == "multi":
+            action_result, query_success, message = self._greynoise_multi_ip(ip, action_result, session)
+
+        elif query_type == "community":
+            session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name, offering="community")
+            self.debug_print("Session initialized successfully")
+            action_result, query_success, message = self._greynoise_community_ip(ip, action_result, session)
+
+        return action_result, query_success, message
+
+    def _test_connectivity(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        self.debug_print("Session initialized successfully")
+
+        try:
+            results = session.test_connection()
+            self.save_progress("Validated API Key. License type: {}, Expiration: {}".format(results["offering"], results["expiration"]))
+        except Exception:
+            self.save_progress("Test Connectivity Failed")
+            return action_result.set_status(phantom.APP_ERROR)
+
+        self.save_progress("Test Connectivity Passed")
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _lookup_ip(self, param):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        action_result, query_result, message = self._query_greynoise_ip(param["ip"], "quick", action_result)
+
+        if query_result:
+            return action_result.set_status(phantom.APP_SUCCESS, message)
+
+        return action_result.set_status(phantom.APP_ERROR, message)
+
+    def _riot_lookup_ip(self, param):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        action_result, query_result, message = self._query_greynoise_ip(param["ip"], "riot", action_result)
+
+        if query_result:
+            return action_result.set_status(phantom.APP_SUCCESS, message)
+
+        return action_result.set_status(phantom.APP_ERROR, message)
+
+    def _community_lookup_ip(self, param):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        action_result, query_result, message = self._query_greynoise_ip(param["ip"], "community", action_result)
+
+        if query_result:
+            return action_result.set_status(phantom.APP_SUCCESS, message)
+
+        return action_result.set_status(phantom.APP_ERROR, message)
+
+    def _ip_reputation(self, param):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        action_result, query_result, message = self._query_greynoise_ip(param["ip"], "noise", action_result)
+
+        if query_result:
+            return action_result.set_status(phantom.APP_SUCCESS, message)
+
+        return action_result.set_status(phantom.APP_ERROR, message)
 
     def _gnql_query(self, param, is_poll=False, action_result=None):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
         if not is_poll:
             action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
-        if phantom.is_fail(ret_val):
-            if is_poll:
-                return ret_val, None
-            else:
-                return ret_val
 
-        first_flag = True
-        remaining_results_flag = True
-        scroll_token = ""
-        full_response = {}
-        size = param["size"]
-        # Validate 'size' action parameter
-        ret_val, size = self._validate_integer(action_result, size, SIZE_ACTION_PARAM)
-        if phantom.is_fail(ret_val):
-            if is_poll:
-                return action_result.get_status(), None
-            else:
-                return action_result.get_status()
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
 
-        while remaining_results_flag:
-            if first_flag:
-                ret_val, response_json, status_code = self._make_rest_call(
-                    action_result,
-                    "get",
-                    GNQL_QUERY_URL,
-                    headers=self._headers,
-                    params=(("query", param["query"]), ("size", size)),
-                )
-                if phantom.is_fail(ret_val):
-                    if is_poll:
-                        return ret_val, None
-                    else:
-                        return ret_val
-                full_response.update(response_json)
-
-            if "scroll" in full_response:
-                scroll_token = full_response["scroll"]
-            if "complete" in full_response or len(full_response["data"]) >= size:
-                remaining_results_flag = False
-            elif "message" in full_response:
-                if full_response["message"] == "no results":
-                    remaining_results_flag = False
-
-            first_flag = False
-
-            if remaining_results_flag:
-                ret_val, response_json, status_code = self._make_rest_call(
-                    action_result,
-                    "get",
-                    GNQL_QUERY_URL,
-                    headers=self._headers,
-                    params=(
-                        ("query", param["query"]),
-                        ("size", size),
-                        ("scroll", scroll_token),
-                    ),
-                )
-                if phantom.is_fail(ret_val):
-                    if is_poll:
-                        return ret_val, None
-                    else:
-                        return ret_val
-                full_response["complete"] = response_json.get("complete")
-                if "scroll" in response_json:
-                    full_response["scroll"] = response_json["scroll"]
-                for item in response_json["data"]:
-                    full_response["data"].append(item)
-
-            if "scroll" in full_response:
-                scroll_token = full_response["scroll"]
-            if "complete" in full_response or len(full_response["data"]) >= size:
-                remaining_results_flag = False
-            elif "message" in full_response:
-                if full_response["message"] == "no results":
-                    remaining_results_flag = False
-            else:
-                remaining_results_flag = True
-
-        result_data = {}
-        action_result.add_data(result_data)
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        query_results = []
         try:
-            for entry in full_response["data"]:
-                entry["visualization"] = VISUALIZATION_URL.format(ip=entry["ip"])
-        except KeyError:
-            error_msg = "Error occurred while processing API response"
+
+            # make the initial query and add it to the query_results dict
+            results = session.query(param["query"])
+
             if is_poll:
-                return action_result.set_status(phantom.APP_ERROR, error_msg), None
+                query_results.append(results["data"])
+
+                # if necessary add the additional results to the query_results dict
+                while "scroll" in results:
+                    results = session.query(param["query"], scroll=param["query"])
+                    query_results.append(results["data"])
+
+                self.save_progress("GreyNoise query complete")
+
+                return query_results
             else:
-                return action_result.set_status(phantom.APP_ERROR, error_msg)
+                query_results.append(results)
 
-        result_data.update(full_response)
+                # if necessary add the additional results to the query_results dict
+                while "scroll" in results:
+                    results = session.query(param["query"], scroll=param["query"])
+                    query_results.append(results["data"])
 
-        if is_poll:
-            return ret_val, result_data
-        else:
-            return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
+                # this gets parsed a little differently from poll now in order to fit in with the view
+                full_response = query_results[0]
+
+                # check the number of results to return
+                ret_val, item_size = self._validate_integer(
+                    action_result, param["size"], SIZE_ACTION_PARAM
+                )
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+
+                if full_response["count"] <= item_size:
+                    action_result.add_data(full_response)
+
+                # if there are more results than what is requested delete them from the query results
+                if full_response["count"] > item_size:
+                    temp = []
+                    for i in range(item_size):
+                        temp.append(full_response["data"][i])
+                    del full_response["data"]
+                    del full_response["count"]
+                    full_response["data"] = temp
+                    full_response["count"] = len(temp)
+                    action_result.add_data(full_response)
+
+                try:
+                    for entry in full_response["data"]:
+                        entry["visualization"] = VISUALIZATION_URL.format(ip=entry["ip"])
+                except KeyError:
+                    error_msg = "Error occurred while processing API response"
+                    return action_result.set_status(phantom.APP_ERROR, error_msg)
+        except Exception as e:
+            err_msg = self._get_error_message_from_exception(e)
+            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+
+        return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
     def _lookup_ips(self, param):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val = self._check_apikey(action_result)
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        ret_val, ips = self._validate_comma_separated_ips(action_result, param['ips'], 'ips')
         if phantom.is_fail(ret_val):
-            return ret_val
+            return action_result.get_status()
 
-        try:
-            ips = [x.strip() for x in param["ips"].split(",")]
-            ips = list(filter(None, ips))
-            if not ips:
-                return action_result.set_status(
-                    phantom.APP_ERROR,
-                    INVALID_COMMA_SEPARATED_VALUE_ERR_MSG.format(key="ips"),
-                )
-            ips = ",".join(ips)
-            ips_string = requote_uri(ips)
-        except Exception as e:
-            err = self._get_error_message_from_exception(e)
-            err_msg = (
-                "Error occurred while processing 'ips' action parameter. {0}".format(
-                    err
-                )
-            )
-            return action_result.set_status(phantom.APP_ERROR, err_msg)
+        result_data, query_result, message = self._query_greynoise_ip(ips, "multi", action_result)
 
-        ret_val, response_json, status_code = self._make_rest_call(
-            action_result,
-            "get",
-            LOOKUP_IPS_URL.format(ips=ips_string),
-            headers=self._headers,
-        )
-        if phantom.is_fail(ret_val):
-            return ret_val
+        if query_result:
+            return action_result.set_status(phantom.APP_SUCCESS, message)
 
-        result_data = []
-        action_result.add_data(result_data)
-        try:
-            for result in response_json:
-                if result["code"] in CODES:
-                    result["code_meaning"] = CODES[result["code"]]
-                else:
-                    result["code_meaning"] = "This code is unmapped"
-
-                result["visualization"] = VISUALIZATION_URL.format(ip=result["ip"])
-                result_data.append(result)
-
-            return action_result.set_status(phantom.APP_SUCCESS, "Lookup IPs action successfully completed")
-        except Exception as e:
-            err = self._get_error_message_from_exception(e)
-            err_msg = "Error occurred while processing results: {0}".format(err)
-            return action_result.set_status(phantom.APP_ERROR, err_msg)
-
-    def _process_query(self, data):
-        # spawn container for every item returned
-        try:
-            if data["count"] > 0:
-                for entry in data["data"]:
-                    ip = entry["ip"]
-                    self.save_progress("Processing IP address {}".format(ip))
-                    container = {
-                        "custom_fields": {},
-                        "data": {},
-                        "name": "",
-                        "description": "Container added by GreyNoise",
-                        "label": self.get_config()
-                        .get("ingest", {})
-                        .get("container_label"),
-                        "sensitivity": "amber",
-                        "source_data_identifier": "",
-                        "tags": entry["tags"],
-                    }
-                    if entry["classification"] == "malicious":
-                        container["severity"] = "high"
-                    else:
-                        container["severity"] = "low"
-                    artifact_cef = {
-                        "ip": entry["ip"],
-                        "classification": entry["classification"],
-                        "first_seen": entry["first_seen"],
-                        "last_seen": entry["last_seen"],
-                        "actor": entry["actor"],
-                        "organization": entry["metadata"]["organization"],
-                        "asn": entry["metadata"]["asn"],
-                    }
-                    if entry["metadata"]["country"]:
-                        artifact_cef["country"] = entry["metadata"]["country"]
-                    if entry["metadata"]["city"]:
-                        artifact_cef["city"] = entry["metadata"]["city"]
-                    container["artifacts"] = [
-                        {
-                            "cef": artifact_cef,
-                            "description": "Artifact added by GreyNoise",
-                            "label": container["label"],
-                            "name": "GreyNoise Query Language Entry",
-                            "source_data_identifier": container[
-                                "source_data_identifier"
-                            ],
-                            "severity": container["severity"],
-                        }
-                    ]
-                    container["name"] = "GreyNoise Query Language Entry"
-
-                    ret_val, container_creation_msg, container_id = self.save_container(
-                        container
-                    )
-                    if phantom.is_fail(ret_val):
-                        self.save_progress("Error occurred while saving the container")
-                        self.debug_print(container_creation_msg)
-                        continue
-                    self.save_progress("Created Container ID: {}".format(container_id))
-                return phantom.APP_SUCCESS
-            else:
-                self.save_progress("No results matching your GNQL query were found")
-                return phantom.APP_SUCCESS
-        except Exception as e:
-            err = self._get_error_message_from_exception(e)
-            err_msg = "Error occurred while processing query data. {}".format(err)
-            self.debug_print(err_msg)
-            return phantom.APP_ERROR
+        return action_result.set_status(phantom.APP_ERROR, message)
 
     def _on_poll(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
         if self.is_poll_now():
             self.save_progress(
-                "Due to the nature of the API, the "
-                "artifact limits imposed by POLL NOW are "
-                "ignored. As a result POLL NOW will simply "
-                "create a container for each artifact."
+                "Starting query based on configured GNQL"
             )
 
         config = self.get_config()
@@ -605,21 +520,48 @@ class GreyNoiseConnector(BaseConnector):
                 phantom.APP_ERROR, "Default on poll query unchanged"
             )
 
-        ret_val, data = self._gnql_query(
-            param, is_poll=True, action_result=action_result
-        )
-
-        if phantom.is_fail(ret_val):
+        query_results = self._gnql_query(param, is_poll=True, action_result=action_result)
+        if isinstance(query_results, bool) and phantom.is_fail(query_results):
             return action_result.get_status()
 
-        ret_val = self._process_query(data)
+        if not query_results:
+            return action_result.set_status(phantom.APP_SUCCESS, "No Data Found")
 
-        if phantom.is_fail(ret_val):
-            return action_result.set_status(
-                phantom.APP_ERROR, "Failed to process the query"
-            )
-        else:
-            return action_result.set_status(phantom.APP_SUCCESS)
+        self.save_progress("Creating containers")
+        for result in query_results[0][-int(param["size"]):]:
+            container = {}
+            container["name"] = "GreyNoise Alert - {}".format(result["ip"])
+            # set the severity of the container based on the classification
+            container_severity = "low"
+            if result["classification"] == "malicious":
+                container_severity = "high"
+            elif result["classification"] == "unknown":
+                container_severity == "medium"
+
+            container["severity"] = container_severity
+            container["description"] = "This container was generated due to an on poll action with the query - {}".format(param["query"])
+
+            ret_val, msg, cid = self.save_container(container)
+            if phantom.is_fail(ret_val):
+                self.save_progress("Error saving container: {}".format(msg))
+                self.debug_print("Error saving container: {} -- CID: {}".format(msg, cid))
+
+            artifact = [{
+                'cef': result,
+                'name': 'Observed Details',
+                'severity': container_severity,
+                'container_id': cid
+            }]
+
+            create_artifact_status, create_artifact_msg, _ = self.save_artifacts(artifact)
+            if phantom.is_fail(create_artifact_status):
+                self.save_progress("Error saving artifact: {}".format(create_artifact_msg))
+                self.debug_print("Error saving artifact: {}".format(create_artifact_msg))
+                continue
+
+        # iterate through query_results and create a container for each IP returned from GN
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
@@ -648,11 +590,19 @@ class GreyNoiseConnector(BaseConnector):
     def initialize(self):
         """Initialize the Phantom integration."""
         self._state = self.load_state()
+
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+            return self.set_status(phantom.APP_ERROR, GREYNOISE_STATE_FILE_CORRUPT_ERR)
+
         config = self.get_config()
 
         self._api_key = config["api_key"]
         app_json = self.get_app_json()
         self._app_version = app_json["app_version"]
+
+        self.set_validator('ip', self._is_valid_ip)
 
         self._headers = {
             "Accept": "application/json",
@@ -673,8 +623,9 @@ class GreyNoiseConnector(BaseConnector):
 
 if __name__ == "__main__":
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
