@@ -1,6 +1,17 @@
 # File: greynoise_view.py
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Copyright (c) GreyNoise, 2019-2022.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 
 import logging
 
@@ -17,7 +28,7 @@ def _parse_data(data, param):
             for item in data:
                 res['ip'] = item['ip']
                 res['noise'] = item['noise']
-                res['code_meaning'] = item['code_meaning']
+                res['code_message'] = item['code_message']
                 res['visualization'] = item['visualization']
         # parsing data for community action
         elif 'ip' in param.keys() and (("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
@@ -62,6 +73,7 @@ def _parse_data(data, param):
                     res['last_updated'] = item['last_updated']
                     res['trust_level'] = item['trust_level']
                     res['reference'] = item['reference']
+                    res['visualization'] = item['visualization']
         # parsing data for lookup ips action
         elif 'ips' in param.keys():
             ip_return_list = []
@@ -69,7 +81,7 @@ def _parse_data(data, param):
             for item in data[0]:
                 temp_dict['ip'] = item['ip']
                 temp_dict['noise'] = item['noise']
-                temp_dict['code_meaning'] = item['code_meaning']
+                temp_dict['code_message'] = item['code_message']
                 temp_dict['visualization'] = item['visualization']
                 ip_return_list.append(temp_dict.copy())
             res['lookup_ips'] = ip_return_list
@@ -97,6 +109,9 @@ def _parse_data(data, param):
                     if item['metadata']['city']:
                         res['city'] = item['metadata']['city']
                     res['tags'] = item['tags']
+                    res['viz_tags'] = ", ".join(item['tags'])
+                    res['cve'] = ", ".join(item['cve'])
+
         # parsing data for gnql query
         elif 'query' in param.keys():
             gnql_list = []
@@ -119,6 +134,8 @@ def _parse_data(data, param):
                     if item['metadata']['city']:
                         temp_dict['city'] = item['metadata']['city']
                     temp_dict['tags'] = item['tags']
+                    temp_dict['viz_tags'] = ", ".join(item['tags'])
+                    temp_dict['cve'] = ", ".join(item['cve'])
                     gnql_list.append(temp_dict.copy())
                 res['gnql_query'] = gnql_list
                 res['message'] = "results"
@@ -161,6 +178,6 @@ def report(provides, all_app_runs, context):
                 if ctx_result:
                     context["results"].append(ctx_result)
 
-        return "view_reports.html"
+        return "greynoise_view_reports.html"
     except Exception as err:
         logger.warning('Error in report: %s' % str(err))

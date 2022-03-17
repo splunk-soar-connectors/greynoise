@@ -1,0 +1,19 @@
+Splunk SOAR GreyNoise for SOAR
+Copyright (c) GreyNoise, 2019-2022
+
+Third-party Software Attributions:
+
+Library: greynoise
+Version: 1.2.0
+License: MIT
+Copyright 2021 GreyNoise <>
+
+Library: requests
+Version: 2.25.0
+License: Apache 2.0
+Kenneth Reitz
+
+Library: six
+Version: 1.15.0
+License: MIT
+Copyright 2010-2020 Benjamin Peterson
