@@ -27,6 +27,7 @@ TRUST_LEVELS = {
 
 ONPOLL_SIZE_CONFIG_PARAM = "'on_poll_size' config parameter"
 SIZE_ACTION_PARAM = "'size' action parameter"
+GREYNOISE_DEFAULT_TIMEOUT = 30
 
 # Integer validation constants
 VALID_INTEGER_MSG = "Please provide a valid integer value in the {key}"
