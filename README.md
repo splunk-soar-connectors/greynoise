@@ -1,18 +1,29 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# GreyNoise
+# GreyNoise for SOAR
 
 Publisher: GreyNoise  
-Connector Version: 2\.1\.2  
+Connector Version: 2\.2\.0  
 Product Vendor: GreyNoise  
 Product Name: GreyNoise  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.9\.39220  
+Minimum Product Version: 5\.1\.0  
 
 This app provides investigative capabilities using the GreyNoise plugin
 
-[comment]: # " File: readme.md"
+[comment]: # " File: README.md"
 [comment]: # ""
-[comment]: # "  Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)"
+[comment]: # "  Copyright (c) GreyNoise, 2019-2022."
+[comment]: # ""
+[comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
+[comment]: # "  you may not use this file except in compliance with the License."
+[comment]: # "  You may obtain a copy of the License at"
+[comment]: # ""
+[comment]: # "      http://www.apache.org/licenses/LICENSE-2.0"
+[comment]: # ""
+[comment]: # "  Unless required by applicable law or agreed to in writing, software distributed under"
+[comment]: # "  the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,"
+[comment]: # "  either express or implied. See the License for the specific language governing permissions"
+[comment]: # "  and limitations under the License."
 [comment]: # ""
 ## Playbook Backward Compatibility
 
@@ -70,6 +81,10 @@ For more information, please visit: <https://developer.greynoise.io/reference#gn
 Retrieves GNQL query results on a set interval. The default number of results returned is 25.  
 Notes:
 
+-   The value provided in the configuration parameter "on_poll_size" will only be considered for
+    scheduled or interval polling. For manual polling, the value provided in the "container_count"
+    will be considered.
+
 -   The on poll action will spawn a container for each result returned. Phantom performance may be
     degraded if an overly large query is used.
 
@@ -90,6 +105,16 @@ Test connectivity to GreyNoise. Requires a valid paid or free community API key.
 
 For terms and legal information, please visit <https://greynoise.io/terms>
 
+## Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the GreyNoise server. Below are the default
+ports used by the Splunk SOAR Connector.
+
+| SERVICE NAME | TRANSPORT PROTOCOL | PORT |
+|--------------|--------------------|------|
+| http         | tcp                | 80   |
+| https        | tcp                | 443  |
+
 
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a GreyNoise asset in SOAR.
@@ -98,7 +123,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **api\_key** |  required  | password | API Key for GreyNoise
 **on\_poll\_query** |  optional  | string | GNQL query to use for the on poll action
-**on\_poll\_size** |  optional  | numeric | The number of results to return for the on poll action
+**on\_poll\_size** |  optional  | numeric | The number of results to return for the interval/schedule poll
+**license\_type** |  optional  | string | GreyNoise license type
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using the supplied configuration  
@@ -140,8 +166,9 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.parameter\.ip | string |  `ip` 
 action\_result\.data\.\*\.code | string | 
-action\_result\.data\.\*\.code\_meaning | string | 
+action\_result\.data\.\*\.code\_message | string | 
 action\_result\.data\.\*\.noise | boolean | 
+action\_result\.data\.\*\.riot | boolean | 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
@@ -166,12 +193,12 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.parameter\.ip | string |  `ip` 
 action\_result\.data\.\*\.category | string | 
-action\_result\.data\.\*\.name | string | 
 action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.explanation | string | 
 action\_result\.data\.\*\.last\_updated | string | 
-action\_result\.data\.\*\.logo\_url | string | 
-action\_result\.data\.\*\.reference | string | 
+action\_result\.data\.\*\.logo\_url | string |  `url` 
+action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.reference | string |  `url` 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
@@ -195,14 +222,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.parameter\.ip | string |  `ip` 
-action\_result\.data\.\*\.seen | boolean | 
+action\_result\.data\.\*\.actor | string | 
 action\_result\.data\.\*\.classification | string | 
 action\_result\.data\.\*\.first\_seen | string | 
 action\_result\.data\.\*\.last\_seen | string | 
-action\_result\.data\.\*\.actor | string | 
-action\_result\.data\.\*\.tags\.\* | string | 
 action\_result\.data\.\*\.metadata\.\* | string | 
 action\_result\.data\.\*\.raw\_data\.\* | string | 
+action\_result\.data\.\*\.seen | boolean | 
+action\_result\.data\.\*\.tags\.\* | string | 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
@@ -228,16 +255,15 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.parameter\.query | string |  `greynoise query` 
 action\_result\.parameter\.size | numeric | 
-action\_result\.data\.\*\.ip | string |  `ip` 
-action\_result\.data\.\*\.seen | boolean | 
+action\_result\.data\.\*\.actor | string | 
 action\_result\.data\.\*\.classification | string | 
 action\_result\.data\.\*\.first\_seen | string | 
+action\_result\.data\.\*\.ip | string |  `ip` 
 action\_result\.data\.\*\.last\_seen | string | 
-action\_result\.data\.\*\.actor | string | 
-action\_result\.data\.\*\.tags\.\* | string | 
 action\_result\.data\.\*\.metadata\.\* | string | 
 action\_result\.data\.\*\.raw\_data\.\* | string | 
-action\_result\.complete | string | 
+action\_result\.data\.\*\.seen | boolean | 
+action\_result\.data\.\*\.tags\.\* | string | 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
@@ -255,15 +281,16 @@ Returns quick check information for multiple IPs\.
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**ips** |  required  | IPs to query, comma\-separated list allowed | string |  `ip` 
+**ips** |  required  | IPs to query, comma\-separated list allowed | string | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.parameter\.ips | string |  `ip` 
+action\_result\.parameter\.ips | string | 
 action\_result\.data\.\*\.code | string | 
-action\_result\.data\.\*\.code\_meaning | string | 
+action\_result\.data\.\*\.code\_message | string | 
 action\_result\.data\.\*\.noise | boolean | 
+action\_result\.data\.\*\.riot | boolean | 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
@@ -277,7 +304,12 @@ Type: **ingest**
 Read only: **True**
 
 #### Action Parameters
-No parameters are required for this action
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**start\_time** |  optional  | Parameter ignored in this app | numeric | 
+**end\_time** |  optional  | Parameter ignored in this app | numeric | 
+**container\_count** |  optional  | Maximum number of results to return for the on poll action | numeric | 
+**artifact\_count** |  optional  | Parameter ignored in this app | numeric | 
 
 #### Action Output
 No Output  
@@ -300,10 +332,10 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.parameter\.ip | string |  `ip` 
 action\_result\.data\.\*\.classification | string | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.data\.\*\.link | string | 
 action\_result\.data\.\*\.last\_seen | string | 
+action\_result\.data\.\*\.link | string |  `url` 
 action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.name | string | 
 action\_result\.status | string | 
 action\_result\.message | string | 
 action\_result\.summary | string | 
