@@ -837,6 +837,20 @@
           ]
         },
         {
+          "data_path": "action_result.parameter.min_score",
+          "data_type": "integer",
+          "example_values": [
+            90
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.limit",
+          "data_type": "integer",
+          "example_values": [
+            50
+          ]
+        },
+        {
           "data_path": "action_result.data.*.actor",
           "data_type": "string",
           "example_values": [
@@ -991,6 +1005,20 @@
           ],
           "example_values": [
             "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.days",
+          "data_type": "integer",
+          "example_values": [
+            30
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.limit",
+          "data_type": "integer",
+          "example_values": [
+            50
           ]
         },
         {
