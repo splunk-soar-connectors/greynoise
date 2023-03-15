@@ -838,14 +838,14 @@
         },
         {
           "data_path": "action_result.parameter.min_score",
-          "data_type": "integer",
+          "data_type": "numeric",
           "example_values": [
             90
           ]
         },
         {
           "data_path": "action_result.parameter.limit",
-          "data_type": "integer",
+          "data_type": "numeric",
           "example_values": [
             50
           ]
@@ -1009,14 +1009,14 @@
         },
         {
           "data_path": "action_result.parameter.days",
-          "data_type": "integer",
+          "data_type": "numeric",
           "example_values": [
             30
           ]
         },
         {
           "data_path": "action_result.parameter.limit",
-          "data_type": "integer",
+          "data_type": "numeric",
           "example_values": [
             50
           ]
