@@ -472,8 +472,9 @@ class GreyNoiseConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
-    def _lookup_similar_ips(self, param, action_result=None):
+    def _lookup_similar_ips(self, param):
         self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
         if license_type == "community":
@@ -493,8 +494,9 @@ class GreyNoiseConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action successfully completed")
 
-    def _lookup_ip_timeline(self, param, action_result=None):
+    def _lookup_ip_timeline(self, param):
         self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
         if license_type == "community":
