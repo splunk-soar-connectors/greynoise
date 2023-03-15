@@ -24,11 +24,11 @@ import urllib.parse
 # Phantom App imports
 import phantom.app as phantom
 import requests
+from greynoise import GreyNoise
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from six.moves.urllib.parse import urljoin as _urljoin
 
-from greynoise import GreyNoise
 from greynoise_consts import *
 
 
@@ -483,10 +483,9 @@ class GreyNoiseConnector(BaseConnector):
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         try:
             results = session.similar(param["ip"], min_score=param["min_score"], limit=param["limit"])
+            action_result.add_data(results)
 
             self.save_progress("GreyNoise query complete")
-
-            return results
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
@@ -505,10 +504,11 @@ class GreyNoiseConnector(BaseConnector):
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         try:
             results = session.timelinedaily(param["ip"], days=param["days"], limit=param["limit"])
+            action_result.add_data(results)
 
             self.save_progress("GreyNoise action complete")
 
-            return results
+            return action_result
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
