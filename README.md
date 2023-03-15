@@ -119,12 +119,12 @@ ports used by the Splunk SOAR Connector.
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a GreyNoise asset in SOAR.
 
-VARIABLE | REQUIRED | TYPE | DESCRIPTION
--------- | -------- | ---- | -----------
-**api\_key** |  required  | password | API Key for GreyNoise
-**on\_poll\_query** |  optional  | string | GNQL query to use for the on poll action
-**on\_poll\_size** |  optional  | numeric | The number of results to return for the interval/schedule poll
-**license\_type** |  optional  | string | GreyNoise license type
+| VARIABLE            | REQUIRED | TYPE     | DESCRIPTION                                                    |
+|---------------------|----------|----------|----------------------------------------------------------------|
+| **api\_key**        | required | password | API Key for GreyNoise                                          |
+| **on\_poll\_query** | optional | string   | GNQL query to use for the on poll action                       |
+| **on\_poll\_size**  | optional | numeric  | The number of results to return for the interval/schedule poll |
+| **license\_type**   | optional | string   | GreyNoise license type                                         |
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using the supplied configuration  
@@ -157,23 +157,23 @@ Type: **investigate**
 Read only: **True**
 
 #### Action Parameters
-PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
---------- | -------- | ----------- | ---- | --------
-**ip** |  required  | IP to query | string |  `ip` 
+| PARAMETER | REQUIRED | DESCRIPTION | TYPE   | CONTAINS |
+|-----------|----------|-------------|--------|----------|
+| **ip**    | required | IP to query | string | `ip`     |
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.ip | string |  `ip` 
-action\_result\.data\.\*\.code | string | 
-action\_result\.data\.\*\.code\_message | string | 
-action\_result\.data\.\*\.noise | boolean | 
-action\_result\.data\.\*\.riot | boolean | 
-action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.summary | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+| DATA PATH                               | TYPE    | CONTAINS |
+|-----------------------------------------|---------|----------|
+| action\_result\.parameter\.ip           | string  | `ip`     |
+| action\_result\.data\.\*\.code          | string  |          |
+| action\_result\.data\.\*\.code\_message | string  |          |
+| action\_result\.data\.\*\.noise         | boolean |          |
+| action\_result\.data\.\*\.riot          | boolean |          |
+| action\_result\.status                  | string  |          |
+| action\_result\.message                 | string  |          |
+| action\_result\.summary                 | string  |          |
+| summary\.total\_objects                 | numeric |          |
+| summary\.total\_objects\_successful     | numeric |          |
 
 ## action: 'riot lookup ip'
 Lookup IP using GreyNoise's RIOT \(Rule It OuT\) endpoint

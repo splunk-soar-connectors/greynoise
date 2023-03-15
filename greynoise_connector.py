@@ -472,6 +472,48 @@ class GreyNoiseConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
+    def _lookup_similar_ips(self, param, action_result=None):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        try:
+            results = session.similar(param["ip"], min_score=param["min_score"], limit=param["limit"])
+
+            self.save_progress("GreyNoise query complete")
+
+            return results
+
+        except Exception as e:
+            err_msg = self._get_error_message_from_exception(e)
+            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action successfully completed")
+
+    def _lookup_ip_timeline(self, param, action_result=None):
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+
+        license_type, message = self._check_license_type()
+        if license_type == "community":
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
+        try:
+            results = session.timelinedaily(param["ip"], days=param["days"], limit=param["limit"])
+
+            self.save_progress("GreyNoise action complete")
+
+            return results
+
+        except Exception as e:
+            err_msg = self._get_error_message_from_exception(e)
+            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action successfully completed")
+
     def _lookup_ips(self, param):
         self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -585,6 +627,10 @@ class GreyNoiseConnector(BaseConnector):
             ret_val = self._riot_lookup_ip(param)
         elif action == "community_lookup_ip":
             ret_val = self._community_lookup_ip(param)
+        elif action == "lookup_similar_ips":
+            ret_val = self._lookup_similar_ips(param)
+        elif action == "lookup_ip_timeline":
+            ret_val = self._lookup_ip_timeline(param)
 
         return ret_val
 
@@ -604,14 +650,6 @@ class GreyNoiseConnector(BaseConnector):
         self._app_version = app_json["app_version"]
 
         self.set_validator('ip', self._is_valid_ip)
-
-        self._headers = {
-            "Accept": "application/json",
-            "key": self._api_key,
-            "User-Agent": "greynoise-phantom-integration-v{0}".format(
-                self._app_version
-            ),
-        }
 
         return phantom.APP_SUCCESS
 
