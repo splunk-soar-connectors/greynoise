@@ -793,7 +793,7 @@
       "versions": "EQ(*)"
     },
     {
-      "action": "lookup similar noise ips",
+      "action": "similar noise ips",
       "description": "Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool",
       "verbose": "The GreyNoise IP Similarity tool allows for analysts to identify IP addresses within the GreyNoise internet scanning dataset that are using a similar scanning profile.",
       "type": "investigate",
@@ -950,7 +950,7 @@
       "versions": "EQ(*)"
     },
     {
-      "action": "lookup noise ip timeline",
+      "action": "noise ip timeline",
       "description": "Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool",
       "verbose": "The GreyNoise IP Similarity tool allows for analysts to identify IP addresses within the GreyNoise internet scanning dataset that are using a similar scanning profile.",
       "type": "investigate",
