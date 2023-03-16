@@ -15,7 +15,7 @@
 
 # URLs
 API_KEY_CHECK_URL = "https://api.greynoise.io/ping"  # pragma: allowlist secret
-VISUALIZATION_URL = "https://www.greynoise.io/viz/ip/{ip}"
+VISUALIZATION_URL = "https://viz.greynoise.io/ip/{ip}"
 GREYNOISE_ACTION_HANDLER_MSG = "In action handler for: {identifier}"
 GREYNOISE_ERR_INVALID_FIELDS = "Please provide a valid value in the '{field}' parameter"
 GREYNOISE_ERR_INVALID_IP = "Validation failed for IP '{ip}'"
