@@ -485,7 +485,7 @@ class GreyNoiseConnector(BaseConnector):
             results = session.similar(param["ip"], min_score=param["min_score"], limit=param["limit"])
             action_result.add_data(results)
 
-            self.save_progress("GreyNoise query complete")
+            self.save_progress("GreyNoise action complete")
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
@@ -507,8 +507,6 @@ class GreyNoiseConnector(BaseConnector):
             action_result.add_data(results)
 
             self.save_progress("GreyNoise action complete")
-
-            return action_result
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
