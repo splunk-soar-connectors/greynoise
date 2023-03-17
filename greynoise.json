@@ -1026,9 +1026,7 @@
           "data_type": "string",
           "example_values": [
             "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
-          ],
-          "column_name": "metadata",
-          "column_order": 0
+          ]
         },
         {
           "data_path": "action_result.data.*.activity.*",
