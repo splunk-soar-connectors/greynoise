@@ -38,7 +38,7 @@ NON_NEG_NON_ZERO_INT_MSG = "Please provide a valid non-zero positive integer val
 ERR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
 
 ERROR_MESSAGE = "Error occurred making API request"
-INTERNAL_IP_ERROR_MESSAGE = "Error occured, IP is an internal IP"
+INTERNAL_IP_ERROR_MESSAGE = "Error occurred, IP is an internal IP"
 API_PARSE_ERROR_MESSAGE = "Error occurred while processing API response"
 
 GREYNOISE_STATE_FILE_CORRUPT_ERR = (

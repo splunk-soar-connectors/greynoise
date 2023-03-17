@@ -15,7 +15,7 @@
   "utctime_updated": "2023-03-14T00:00:00.000000Z",
   "package_name": "phantom_greynoise",
   "main_module": "greynoise_connector.py",
-  "min_phantom_version": "5.1.0",
+  "min_phantom_version": "5.3.0",
   "fips_compliant": false,
   "configuration": {
     "api_key": {
@@ -822,7 +822,7 @@
           "data_type": "numeric",
           "required": true,
           "default": 50,
-          "order": 1
+          "order": 2
         }
       },
       "output": [
@@ -993,7 +993,7 @@
           "data_type": "numeric",
           "required": true,
           "default": 50,
-          "order": 1
+          "order": 2
         }
       },
       "output": [
