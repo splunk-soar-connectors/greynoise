@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def _parse_data(data, param):
+def _parse_data(data, param):  # noqa: C901
 
     try:
         res = {}
@@ -31,7 +31,8 @@ def _parse_data(data, param):
                 res['code_message'] = item['code_message']
                 res['visualization'] = item['visualization']
         # parsing data for community action
-        elif 'ip' in param.keys() and (("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
+        elif 'ip' in param.keys() and (
+                ("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
             if "plan" in data[0].keys():
                 for item in data:
                     res['plan'] = item['plan']
@@ -56,7 +57,8 @@ def _parse_data(data, param):
                     res['message'] = item['message']
                     res['community_not_found'] = item['community_not_found']
         # parsing data for riot action
-        elif 'ip' in param.keys() and (("riot" in data[0].keys() and "category" in data[0].keys()) or "riot_unseen" in data[0].keys()):
+        elif 'ip' in param.keys() and (
+                ("riot" in data[0].keys() and "category" in data[0].keys()) or "riot_unseen" in data[0].keys()):
             if "riot_unseen" in data[0].keys():
                 for item in data:
                     res['ip'] = item['ip']
@@ -111,7 +113,24 @@ def _parse_data(data, param):
                     res['tags'] = item['tags']
                     res['viz_tags'] = ", ".join(item['tags'])
                     res['cve'] = ", ".join(item['cve'])
-
+        # parse ip timeline data
+        elif 'ip' in param.keys() and 'activity' in data[0].keys():
+            if not data[0]["activity"]:
+                res['ip'] = data[0]["metadata"]["ip"]
+                res['message'] = "No Timeline Data Available"
+            else:
+                res['ip'] = data[0]["metadata"]["ip"]
+                res['start_time'] = data[0]["metadata"]["start_time"]
+                res['end_time'] = data[0]["metadata"]["end_time"]
+                res["activity"] = data[0]["activity"]
+        # parse ip timeline data
+        elif 'ip' in param.keys() and 'similar_ips' in data[0].keys():
+            if data[0]["total"] == 0:
+                res['ip'] = data[0]["metadata"]["ip"]
+                res['message'] = "No Similar IPs Found"
+            else:
+                res['ip'] = data[0]["ip"]["ip"]
+                res["similar_ips"] = data[0]["similar_ips"]
         # parsing data for gnql query
         elif 'query' in param.keys():
             gnql_list = []
