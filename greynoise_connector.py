@@ -483,6 +483,8 @@ class GreyNoiseConnector(BaseConnector):
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         try:
             results = session.similar(param["ip"], min_score=param["min_score"], limit=param["limit"])
+            if "similar_ips" not in results:
+                results["similar_ips"] = []
             action_result.add_data(results)
 
             self.save_progress("GreyNoise action complete")
@@ -490,7 +492,7 @@ class GreyNoiseConnector(BaseConnector):
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
             if "403" in err_msg:
-                results["similar_ips"] = []
+                results = {"ip": param["ip"], "message": "Not allowed.", "similar_ips": []}
                 action_result.add_data(results)
                 return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action not allowed")
             else:
@@ -509,6 +511,8 @@ class GreyNoiseConnector(BaseConnector):
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         try:
             results = session.timelinedaily(param["ip"], days=param["days"], limit=param["limit"])
+            if "activity" not in results:
+                results["activity"] = []
             action_result.add_data(results)
 
             self.save_progress("GreyNoise action complete")
@@ -516,7 +520,7 @@ class GreyNoiseConnector(BaseConnector):
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
             if "403" in err_msg:
-                results["activity"] = []
+                results = {"ip": param["ip"], "message": "Not allowed.", "activity": []}
                 action_result.add_data(results)
                 return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action not allowed")
             else:

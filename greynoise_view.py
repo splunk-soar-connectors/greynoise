@@ -116,8 +116,11 @@ def _parse_data(data, param):  # noqa: C901
                 res['cve'] = ", ".join(data[0]['cve'])
         # parse ip timeline data
         elif 'ip' in param.keys() and 'activity' in data[0].keys():
-            if not data[0]["activity"]:
-                res['ip'] = data[0]["metadata"]["ip"]
+            if "message" in data[0] and "Not allowed" in data[0]["message"]:
+                res['ip'] = param["ip"]
+                res['message'] = data[0]["message"]
+            elif not data[0]["activity"]:
+                res['ip'] = param["ip"]
                 res['message'] = "No Timeline Data Available"
             else:
                 for item in data[0]["activity"]:
@@ -140,8 +143,11 @@ def _parse_data(data, param):  # noqa: C901
                 res["link"] = f"https://viz.greynoise.io/ip/{param['ip']}?view=timeline"
         # parse ip sim data
         elif 'ip' in param.keys() and 'similar_ips' in data[0].keys():
-            if data[0]["total"] == 0:
-                res['ip'] = data[0]["metadata"]["ip"]
+            if "message" in data[0]:
+                res['ip'] = param["ip"]
+                res['message'] = data[0]["message"]
+            elif data[0]["total"] == 0:
+                res['ip'] = param["ip"]
                 res['message'] = "No Similar IPs Found"
             else:
                 for item in data[0]["similar_ips"]:

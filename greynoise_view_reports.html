@@ -171,6 +171,10 @@
     {% for result in results %}
     {% if not result.data %}
     <h4 class="wf-h4-style">No lookup information found</h4>
+    {% elif result.data.message == "Not allowed." %}
+    <h4 class="wf-h4-style">Feature Not Available with Subscription</h4>
+    {% elif result.data.message == "ip not found" %}
+    <h4 class="wf-h4-style">No Data - IP Not found in Dataset</h4>
     {% elif result.data.ip and result.data.code_message %}
     <h3 class="wf-h3-style">IP Lookup Results</h3>
     <table class="wf-table-horizontal">
