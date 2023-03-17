@@ -489,7 +489,12 @@ class GreyNoiseConnector(BaseConnector):
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+            if "403" in err_msg:
+                results["similar_ips"] = []
+                action_result.add_data(results)
+                return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action not allowed")
+            else:
+                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action successfully completed")
 
@@ -510,7 +515,12 @@ class GreyNoiseConnector(BaseConnector):
 
         except Exception as e:
             err_msg = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+            if "403" in err_msg:
+                results["activity"] = []
+                action_result.add_data(results)
+                return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action not allowed")
+            else:
+                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action successfully completed")
 
