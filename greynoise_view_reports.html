@@ -376,6 +376,9 @@
     </table>
     {% elif result.data.ip and result.data.similar_ips %}
     <h3 class="wf-h3-style">Similar IPs Lookup Results</h3>
+    <h5 class="wf-h5-style">{{result.data.message}}</h5>
+    <h5 class="wf-h5-style"><a target="_blank" rel="noopener noreferrer"
+                   href={{result.data.link}}>View Similarity Details on the GreyNoise Visualizer</a></h5>
     <table class="wf-table-horizontal">
         <tr>
             <th>IP</th>
@@ -388,7 +391,15 @@
         </tr>
         {% for item in result.data.similar_ips %}
         <tr>
-            <td>{{ item.ip }}</td>
+            <td>
+                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ip'],
+                            'value':'{{ result.data.ip }}' }], 0,
+                            {{ container.id }}, null, false);">
+                    {{item.ip}}
+                    &nbsp;
+                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                </a>
+            </td>
             <td>{{ item.score }}</td>
             <td>{{ item.classification }}</td>
             <td>{{ item.actor }}</td>
@@ -399,9 +410,12 @@
     </table>
     {% elif result.data.ip and result.data.activity %}
     <h3 class="wf-h3-style">IP Timeline Lookup Results</h3>
+    <h5 class="wf-h5-style">{{result.data.message}}</h5>
+        <h5 class="wf-h5-style"><a target="_blank" rel="noopener noreferrer"
+                   href={{result.data.link}}>View Timeline Details on the GreyNoise Visualizer</a></h5>
     <table class="wf-table-horizontal">
         <tr>
-            <th colspan=9>IP - {{result.data.ip}</th>
+            <th colspan=9>IP - {{result.data.ip}}</th>
         </tr>
         <tr>
             <th>Date</th>
@@ -561,10 +575,20 @@
                 <table class="wf-table-vertical" style="width: 100%">
                     <tr>
                         <td style="width: 20%">
-                            Country
+                            Source Country
                         </td>
                         <td style="width: 80%">
                             {{result.data.country}}
+                        </td>
+                    </tr>
+                </table>
+                <table class="wf-table-vertical" style="width: 100%">
+                    <tr>
+                        <td style="width: 20%">
+                            Destination Countries
+                        </td>
+                        <td style="width: 80%">
+                            {{result.data.destination_countries}}
                         </td>
                     </tr>
                 </table>
@@ -738,10 +762,18 @@
                     </tr>
                     <tr>
                         <td style="width: 20%">
-                            Country
+                            Source Country
                         </td>
                         <td style="width: 80%">
                             {{entry.country}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%">
+                            Destination Countries
+                        </td>
+                        <td style="width: 80%">
+                            {{entry.destination_countries}}
                         </td>
                     </tr>
                     <tr>

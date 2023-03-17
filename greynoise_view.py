@@ -96,23 +96,24 @@ def _parse_data(data, param):  # noqa: C901
                 res['first_seen'] = "This IP has never been seen scanning the internet"
                 res['last_seen'] = "This IP has never been seen scanning the internet"
             else:
-                for item in data:
-                    res['ip'] = item['ip']
-                    res['seen'] = item['seen']
-                    res['classification'] = item['classification']
-                    res['first_seen'] = item['first_seen']
-                    res['last_seen'] = item['last_seen']
-                    res['visualization'] = item['visualization']
-                    res['actor'] = item['actor']
-                    res['organization'] = item['metadata']['organization']
-                    res['asn'] = item['metadata']['asn']
-                    if item['metadata']['country']:
-                        res['country'] = item['metadata']['country']
-                    if item['metadata']['city']:
-                        res['city'] = item['metadata']['city']
-                    res['tags'] = item['tags']
-                    res['viz_tags'] = ", ".join(item['tags'])
-                    res['cve'] = ", ".join(item['cve'])
+                res['ip'] = data[0]['ip']
+                res['seen'] = data[0]['seen']
+                res['classification'] = data[0]['classification']
+                res['first_seen'] = data[0]['first_seen']
+                res['last_seen'] = data[0]['last_seen']
+                res['visualization'] = data[0]['visualization']
+                res['actor'] = data[0]['actor']
+                res['organization'] = data[0]['metadata']['organization']
+                res['asn'] = data[0]['metadata']['asn']
+                if data[0]['metadata']['country']:
+                    res['country'] = data[0]['metadata']['country']
+                if data[0]['metadata']['destination_countries']:
+                    res['destination_countries'] = ', '.join(data[0]['metadata']['destination_countries'])
+                if data[0]['metadata']['city']:
+                    res['city'] = data[0]['metadata']['city']
+                res['tags'] = data[0]['tags']
+                res['viz_tags'] = ", ".join(data[0]['tags'])
+                res['cve'] = ", ".join(data[0]['cve'])
         # parse ip timeline data
         elif 'ip' in param.keys() and 'activity' in data[0].keys():
             if not data[0]["activity"]:
@@ -135,7 +136,9 @@ def _parse_data(data, param):  # noqa: C901
                 res['start_time'] = data[0]["metadata"]["start_time"]
                 res['end_time'] = data[0]["metadata"]["end_time"]
                 res["activity"] = data[0]["activity"]
-        # parse ip timeline data
+                res["message"] = f"Show {param['days']} days of daily scanning activity for {param['ip']}"
+                res["link"] = f"https://viz.greynoise.io/ip/{param['ip']}?view=timeline"
+        # parse ip sim data
         elif 'ip' in param.keys() and 'similar_ips' in data[0].keys():
             if data[0]["total"] == 0:
                 res['ip'] = data[0]["metadata"]["ip"]
@@ -146,6 +149,15 @@ def _parse_data(data, param):  # noqa: C901
                     item["score"] = str(int(item["score"] * 100)) + "%"
                 res['ip'] = data[0]["ip"]["ip"]
                 res["similar_ips"] = data[0]["similar_ips"]
+                res["link"] = f"https://viz.greynoise.io/ip-similarity/{param['ip']}"
+                if data[0]["total"] > param['limit']:
+                    res[
+                        "message"] = f"Showing first {param['limit']} IPs of {data[0]['total']} IPs that have a " \
+                                     f"similarity score of {param['min_score']}% or above to {param['ip']} "
+                else:
+                    res[
+                        "message"] = f"Showing {data[0]['total']} IPs that have a " \
+                                     f"similarity score of {param['min_score']}% or above to {param['ip']} "
         # parsing data for gnql query
         elif 'query' in param.keys():
             gnql_list = []
@@ -165,6 +177,8 @@ def _parse_data(data, param):  # noqa: C901
                     temp_dict['asn'] = item['metadata']['asn']
                     if item['metadata']['country']:
                         temp_dict['country'] = item['metadata']['country']
+                    if item['metadata']['destination_countries']:
+                        temp_dict['destination_countries'] = ', '.join(item['metadata']['destination_countries'])
                     if item['metadata']['city']:
                         temp_dict['city'] = item['metadata']['city']
                     temp_dict['tags'] = item['tags']
