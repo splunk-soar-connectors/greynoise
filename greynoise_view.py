@@ -119,6 +119,18 @@ def _parse_data(data, param):  # noqa: C901
                 res['ip'] = data[0]["metadata"]["ip"]
                 res['message'] = "No Timeline Data Available"
             else:
+                for item in data[0]["activity"]:
+                    item["timestamp"] = item["timestamp"].split("T")[0]
+                    item["http_user_agents"] = ', '.join(item["http_user_agents"])
+                    item["http_paths"] = ', '.join(item["http_paths"])
+                    tags = []
+                    for tag in item["tags"]:
+                        tags.append(tag["name"])
+                    item["tags"] = tags
+                    ports = []
+                    for protocol in item["protocols"]:
+                        ports.append(str(protocol["port"] + "/" + str(protocol["transport_protocol"])))
+                    item["protocols"] = ports
                 res['ip'] = data[0]["metadata"]["ip"]
                 res['start_time'] = data[0]["metadata"]["start_time"]
                 res['end_time'] = data[0]["metadata"]["end_time"]
