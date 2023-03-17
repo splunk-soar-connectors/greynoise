@@ -126,11 +126,11 @@ def _parse_data(data, param):  # noqa: C901
                     tags = []
                     for tag in item["tags"]:
                         tags.append(tag["name"])
-                    item["tags"] = tags
+                    item["tags"] = ', '.join(tags)
                     ports = []
                     for protocol in item["protocols"]:
-                        ports.append(str(protocol["port"] + "/" + str(protocol["transport_protocol"])))
-                    item["protocols"] = ports
+                        ports.append(str(protocol["port"]) + "/" + str(protocol["transport_protocol"]))
+                    item["protocols"] = ', '.join(ports)
                 res['ip'] = data[0]["metadata"]["ip"]
                 res['start_time'] = data[0]["metadata"]["start_time"]
                 res['end_time'] = data[0]["metadata"]["end_time"]
@@ -141,6 +141,9 @@ def _parse_data(data, param):  # noqa: C901
                 res['ip'] = data[0]["metadata"]["ip"]
                 res['message'] = "No Similar IPs Found"
             else:
+                for item in data[0]["similar_ips"]:
+                    item["features"] = ', '.join(item["features"])
+                    item["score"] = str(int(item["score"] * 100)) + "%"
                 res['ip'] = data[0]["ip"]["ip"]
                 res["similar_ips"] = data[0]["similar_ips"]
         # parsing data for gnql query

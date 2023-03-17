@@ -375,26 +375,27 @@
         </tr>
     </table>
     {% elif result.data.ip and result.data.similar_ips %}
-    <h3 class="wf-h3-style">Similar IP Lookup Results</h3>
+    <h3 class="wf-h3-style">Similar IPs Lookup Results</h3>
     <table class="wf-table-horizontal">
         <tr>
             <th>IP</th>
-            <th>Similar IPs</th>
+            <th>Score</th>
+            <th>Classification</th>
+            <th>Actor</th>
+            <th>Last Seen</th>
+            <th>Organization</th>
+            <th>Features Matched</th>
         </tr>
+        {% for item in result.data.similar_ips %}
         <tr>
-            <td>
-                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ip'],
-                            'value':'{{ result.data.ip }}' }], 0,
-                            {{ container.id }}, null, false);">
-                    {{result.data.ip}}
-                    &nbsp;
-                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                </a>
-            </td>
-            <td>
-                {{result.data.similar_ips}}
-            </td>
-        </tr>
+            <td>{{ item.ip }}</td>
+            <td>{{ item.score }}</td>
+            <td>{{ item.classification }}</td>
+            <td>{{ item.actor }}</td>
+            <td>{{ item.last_seen }}</td>
+            <td>{{ item.organization }}</td>
+            <td>{{ item.features }}</td>
+            {% endfor %}
     </table>
     {% elif result.data.ip and result.data.activity %}
     <h3 class="wf-h3-style">IP Timeline Lookup Results</h3>
