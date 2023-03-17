@@ -125,7 +125,8 @@ class GreyNoiseConnector(BaseConnector):
                 value = value.strip()
                 if value:
                     if not self._is_valid_ip(value):
-                        error_msg = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value), GREYNOISE_ERROR_INVALID_FIELDS.format(field=key))
+                        error_msg = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value),
+                                                    GREYNOISE_ERROR_INVALID_FIELDS.format(field=key))
                         return action_result.set_status(phantom.APP_ERROR, error_msg), None
                     filtered_fields_list.append(value)
 
