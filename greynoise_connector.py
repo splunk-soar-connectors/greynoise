@@ -55,7 +55,7 @@ class GreyNoiseConnector(BaseConnector):
         :return: error message
         """
         error_code = None
-        error_msg = ERR_MSG_UNAVAILABLE
+        error_msg = ERROR_MESSAGE_UNAVAILABLE
 
         try:
             if hasattr(e, "args"):
@@ -80,7 +80,7 @@ class GreyNoiseConnector(BaseConnector):
                 if not float(parameter).is_integer():
                     return (
                         action_result.set_status(
-                            phantom.APP_ERROR, VALID_INTEGER_MSG.format(key=key)
+                            phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)
                         ),
                         None,
                     )
@@ -89,19 +89,19 @@ class GreyNoiseConnector(BaseConnector):
             except Exception:
                 return (
                     action_result.set_status(
-                        phantom.APP_ERROR, VALID_INTEGER_MSG.format(key=key)
+                        phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)
                     ),
                     None,
                 )
             if parameter < 0:
                 return (
                     action_result.set_status(
-                        phantom.APP_ERROR, NON_NEGATIVE_INTEGER_MSG.format(key=key)
+                        phantom.APP_ERROR, NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)
                     ),
                     None,
                 )
             if not allow_zero and parameter == 0:
-                return (action_result.set_status(phantom.APP_ERROR, NON_NEG_NON_ZERO_INT_MSG.format(key=key)), None)
+                return (action_result.set_status(phantom.APP_ERROR, NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)), None)
 
         return phantom.APP_SUCCESS, parameter
 
@@ -125,12 +125,12 @@ class GreyNoiseConnector(BaseConnector):
                 value = value.strip()
                 if value:
                     if not self._is_valid_ip(value):
-                        error_msg = "{}. {}".format(GREYNOISE_ERR_INVALID_IP.format(ip=value), GREYNOISE_ERR_INVALID_FIELDS.format(field=key))
+                        error_msg = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value), GREYNOISE_ERROR_INVALID_FIELDS.format(field=key))
                         return action_result.set_status(phantom.APP_ERROR, error_msg), None
                     filtered_fields_list.append(value)
 
             if not filtered_fields_list:
-                return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERR_INVALID_FIELDS.format(field=key)), None
+                return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERROR_INVALID_FIELDS.format(field=key)), None
             return phantom.APP_SUCCESS, ','.join(filtered_fields_list)
         return phantom.APP_SUCCESS, field
 
@@ -346,7 +346,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _lookup_ip(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -361,7 +361,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_ERROR, message)
 
     def _riot_lookup_ip(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -376,7 +376,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_ERROR, message)
 
     def _community_lookup_ip(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         action_result, query_result, message = self._query_greynoise_ip(param["ip"], "community", action_result)
@@ -387,7 +387,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_ERROR, message)
 
     def _ip_reputation(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -402,7 +402,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_ERROR, message)
 
     def _gnql_query(self, param, is_poll=False, action_result=None):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         if not is_poll:
             action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -473,7 +473,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
     def _lookup_similar_ips(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -501,7 +501,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action successfully completed")
 
     def _lookup_ip_timeline(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -529,7 +529,7 @@ class GreyNoiseConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action successfully completed")
 
     def _lookup_ips(self, param):
-        self.save_progress(GREYNOISE_ACTION_HANDLER_MSG.format(identifier=self.get_action_identifier()))
+        self.save_progress(GREYNOISE_ACTION_HANDLER_MESSAGE.format(identifier=self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         license_type, message = self._check_license_type()
@@ -655,7 +655,7 @@ class GreyNoiseConnector(BaseConnector):
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
-            return self.set_status(phantom.APP_ERROR, GREYNOISE_STATE_FILE_CORRUPT_ERR)
+            return self.set_status(phantom.APP_ERROR, GREYNOISE_STATE_FILE_CORRUPT_ERROR)
 
         config = self.get_config()
 
