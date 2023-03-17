@@ -473,8 +473,7 @@
         </tr>
         {% endfor %}
     </table>
-    {% elif result.data.seen or result.data.unseen_rep or result.data.first_seen == "This IP has never been seen
-    scanning the internet" and not result.param.query %}
+    {% elif result.param.ip and result.data.seen and not result.param.query %}
     {% if result.data.seen is True %}
     <h3 class="wf-h3-style">IP Reputation Results</h3>
     <table class="wf-table-vertical" style="width: 100%">
