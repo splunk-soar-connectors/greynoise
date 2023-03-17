@@ -55,22 +55,22 @@ class GreyNoiseConnector(BaseConnector):
         :return: error message
         """
         error_code = None
-        error_msg = ERROR_MESSAGE_UNAVAILABLE
+        error_message = ERROR_MESSAGE_UNAVAILABLE
 
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
-                    error_msg = e.args[1]
+                    error_message = e.args[1]
                 elif len(e.args) == 1:
-                    error_msg = e.args[0]
+                    error_message = e.args[0]
         except:
             pass
 
         if not error_code:
-            error_text = "Error Message: {}".format(error_msg)
+            error_text = "Error Message: {}".format(error_message)
         else:
-            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
 
         return error_text
 
@@ -125,9 +125,9 @@ class GreyNoiseConnector(BaseConnector):
                 value = value.strip()
                 if value:
                     if not self._is_valid_ip(value):
-                        error_msg = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value),
+                        error_message = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value),
                                                     GREYNOISE_ERROR_INVALID_FIELDS.format(field=key))
-                        return action_result.set_status(phantom.APP_ERROR, error_msg), None
+                        return action_result.set_status(phantom.APP_ERROR, error_message), None
                     filtered_fields_list.append(value)
 
             if not filtered_fields_list:
@@ -465,11 +465,11 @@ class GreyNoiseConnector(BaseConnector):
                     for entry in full_response["data"]:
                         entry["visualization"] = VISUALIZATION_URL.format(ip=entry["ip"])
                 except KeyError:
-                    error_msg = "Error occurred while processing API response"
-                    return action_result.set_status(phantom.APP_ERROR, error_msg)
+                    error_message = "Error occurred while processing API response"
+                    return action_result.set_status(phantom.APP_ERROR, error_message)
         except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+            error_message = self._get_error_message_from_exception(e)
+            return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(error_message))
 
         return action_result.set_status(phantom.APP_SUCCESS, "GNQL Query action successfully completed")
 
@@ -491,13 +491,13 @@ class GreyNoiseConnector(BaseConnector):
             self.save_progress("GreyNoise action complete")
 
         except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
-            if "403" in err_msg:
+            error_message = self._get_error_message_from_exception(e)
+            if "403" in error_message:
                 results = {"ip": param["ip"], "message": "Not allowed.", "similar_ips": []}
                 action_result.add_data(results)
                 return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action not allowed")
             else:
-                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(error_message))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup Similar IPs action successfully completed")
 
@@ -519,13 +519,13 @@ class GreyNoiseConnector(BaseConnector):
             self.save_progress("GreyNoise action complete")
 
         except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
-            if "403" in err_msg:
+            error_message = self._get_error_message_from_exception(e)
+            if "403" in error_message:
                 results = {"ip": param["ip"], "message": "Not allowed.", "activity": []}
                 action_result.add_data(results)
                 return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action not allowed")
             else:
-                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(err_msg))
+                return action_result.set_status(phantom.APP_ERROR, urllib.parse.unquote(error_message))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Lookup IP Timeline action successfully completed")
 
@@ -599,10 +599,10 @@ class GreyNoiseConnector(BaseConnector):
             container["severity"] = container_severity
             container["description"] = "This container was generated due to an on poll action with the query - {}".format(param["query"])
 
-            ret_val, msg, cid = self.save_container(container)
+            ret_val, message, cid = self.save_container(container)
             if phantom.is_fail(ret_val):
-                self.save_progress("Error saving container: {}".format(msg))
-                self.debug_print("Error saving container: {} -- CID: {}".format(msg, cid))
+                self.save_progress("Error saving container: {}".format(message))
+                self.debug_print("Error saving container: {} -- CID: {}".format(message, cid))
 
             artifact = [{
                 'cef': result,
@@ -611,10 +611,10 @@ class GreyNoiseConnector(BaseConnector):
                 'container_id': cid
             }]
 
-            create_artifact_status, create_artifact_msg, _ = self.save_artifacts(artifact)
+            create_artifact_status, create_artifact_message, _ = self.save_artifacts(artifact)
             if phantom.is_fail(create_artifact_status):
-                self.save_progress("Error saving artifact: {}".format(create_artifact_msg))
-                self.debug_print("Error saving artifact: {}".format(create_artifact_msg))
+                self.save_progress("Error saving artifact: {}".format(create_artifact_message))
+                self.debug_print("Error saving artifact: {}".format(create_artifact_message))
                 continue
 
         # iterate through query_results and create a container for each IP returned from GN
