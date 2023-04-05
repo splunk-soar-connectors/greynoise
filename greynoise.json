@@ -1,1004 +1,1137 @@
 {
-    "appid": "3af2ef2d-6e4a-4e74-8f20-4d6030625561",
-    "name": "GreyNoise for SOAR",
-    "description": "This app provides investigative capabilities using the GreyNoise plugin",
-    "type": "reputation",
-    "product_vendor": "GreyNoise",
-    "logo": "logo_greynoise.svg",
-    "logo_dark": "logo_greynoise_dark.svg",
-    "product_name": "GreyNoise",
-    "python_version": "3",
-    "product_version_regex": ".*",
-    "publisher": "GreyNoise",
-    "license": "Copyright (c) GreyNoise, 2019-2022",
-    "app_version": "2.2.0",
-    "utctime_updated": "2022-01-07T22:01:13.000000Z",
-    "package_name": "phantom_greynoise",
-    "main_module": "greynoise_connector.py",
-    "min_phantom_version": "5.1.0",
-    "fips_compliant": false,
-    "configuration": {
-        "api_key": {
-            "description": "API Key for GreyNoise",
-            "data_type": "password",
-            "required": true,
-            "order": 0
-        },
-        "on_poll_query": {
-            "description": "GNQL query to use for the on poll action",
-            "data_type": "string",
-            "default": "Please refer to the documentation",
-            "order": 1
-        },
-        "on_poll_size": {
-            "description": "The number of results to return for the interval/schedule poll",
-            "data_type": "numeric",
-            "default": 25,
-            "order": 2
-        },
-        "license_type": {
-            "description": "GreyNoise license type",
-            "data_type": "string",
-            "value_list": [
-                "enterprise",
-                "community"
-            ],
-            "default": "enterprise",
-            "order": 3
-        }
+  "appid": "3af2ef2d-6e4a-4e74-8f20-4d6030625561",
+  "name": "GreyNoise for SOAR",
+  "description": "This app provides investigative capabilities using the GreyNoise plugin",
+  "type": "reputation",
+  "product_vendor": "GreyNoise",
+  "logo": "logo_greynoise.svg",
+  "logo_dark": "logo_greynoise_dark.svg",
+  "product_name": "GreyNoise",
+  "python_version": "3",
+  "product_version_regex": ".*",
+  "publisher": "GreyNoise",
+  "license": "Copyright (c) GreyNoise, 2019-2022",
+  "app_version": "2.3.0",
+  "utctime_updated": "2023-03-14T00:00:00.000000Z",
+  "package_name": "phantom_greynoise",
+  "main_module": "greynoise_connector.py",
+  "min_phantom_version": "5.3.0",
+  "fips_compliant": false,
+  "configuration": {
+    "api_key": {
+      "description": "API Key for GreyNoise",
+      "data_type": "password",
+      "required": true,
+      "order": 0
     },
-    "actions": [
-        {
-            "action": "test connectivity",
-            "description": "Validate the asset configuration for connectivity using the supplied configuration",
-            "verbose": "Tests the connection to the paid GreyNoise API.",
-            "type": "test",
-            "identifier": "test_connectivity",
-            "read_only": true,
-            "parameters": {},
-            "output": [],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "lookup ip",
-            "description": "Lookup IP using GreyNoise API Quick Check Endpoint",
-            "type": "investigate",
-            "identifier": "lookup_ip",
-            "read_only": true,
-            "parameters": {
-                "ip": {
-                    "description": "IP to query",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "primary": true,
-                    "required": true,
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.code",
-                    "data_type": "string",
-                    "example_values": [
-                        "0x00",
-                        "0x01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.code_message",
-                    "data_type": "string",
-                    "example_values": [
-                        "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the GreyNoise sensor network"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.noise",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.riot",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise IP Lookup"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "riot lookup ip",
-            "description": "Lookup IP using GreyNoise's RIOT (Rule It OuT) endpoint",
-            "verbose": "RIOT identifies IPs from known benign services and organizations that commonly cause false positives in network security and threat intelligence products. The collection of IPs in RIOT is continually curated and verified to provide accurate results.",
-            "type": "investigate",
-            "identifier": "riot_lookup_ip",
-            "read_only": true,
-            "parameters": {
-                "ip": {
-                    "description": "IP to query",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "primary": true,
-                    "required": true,
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.category",
-                    "data_type": "string",
-                    "example_values": [
-                        "public_dns"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        "Global domain name system (DNS) resolution service."
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.explanation",
-                    "data_type": "string",
-                    "example_values": [
-                        "Public DNS services are used as alternatives to ISP's name servers. You may see devices on your network communicating with Public DNS over port XX/TCP or XX/UDP to resolve DNS lookups."
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.last_updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "2021-05-26T17:55:35Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.logo_url",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Public DNS"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.reference",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://developers.google.com/speed/public-dns/docs/isp#alternative"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise RIOT IP Lookup"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "ip reputation",
-            "description": "Get full GreyNoise reputation and context for a specific IP",
-            "verbose": "Get more information about a given IP address. Returns time ranges, IP metadata (network owner, ASN, reverse DNS pointer, country), associated actors, activity tags, raw port scan, and web request information.",
-            "type": "investigate",
-            "identifier": "ip_reputation",
-            "read_only": true,
-            "parameters": {
-                "ip": {
-                    "description": "IP to query",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "primary": true,
-                    "required": true,
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.actor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Shodan.io"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification",
-                    "data_type": "string",
-                    "example_values": [
-                        "benign",
-                        "malicious"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.first_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-12-25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.last_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-12-25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.raw_data.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "{\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.seen",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tags.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "Mirai",
-                        "Telnet Worm"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise IP Reputation"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "gnql query",
-            "description": "Use the GreyNoise Query Language to run a query",
-            "verbose": "Please refer to <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://developer.greynoise.io/reference#gnqlquery-1\">https://developer.greynoise.io/reference#gnqlquery-1</a> for further information.",
-            "type": "investigate",
-            "identifier": "gnql_query",
-            "read_only": true,
-            "parameters": {
-                "query": {
-                    "description": "GNQL query",
-                    "data_type": "string",
-                    "contains": [
-                        "greynoise query"
-                    ],
-                    "primary": true,
-                    "required": true,
-                    "order": 0
-                },
-                "size": {
-                    "description": "The number of results to return (warning: returning over 1000 results may degrade widget performance)",
-                    "data_type": "numeric",
-                    "required": true,
-                    "default": 100,
-                    "order": 1
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.query",
-                    "data_type": "string",
-                    "contains": [
-                        "greynoise query"
-                    ],
-                    "example_values": [
-                        "metadata.organization:your_organization classification:malicious",
-                        "8.0.0.0/8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.size",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1000
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.actor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Shodan.io"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification",
-                    "data_type": "string",
-                    "example_values": [
-                        "benign",
-                        "malicious"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.first_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-12-25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.last_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-12-25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.raw_data.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "{\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.seen",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tags.*",
-                    "data_type": "string",
-                    "example_values": [
-                        "Mirai",
-                        "Telnet Worm"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise Run Query"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "lookup ips",
-            "description": "Lookup IPs using GreyNoise API Multi Quick Check Endpoint (comma-separated, limit 500 per request)",
-            "verbose": "Returns quick check information for multiple IPs.",
-            "type": "investigate",
-            "identifier": "lookup_ips",
-            "read_only": true,
-            "parameters": {
-                "ips": {
-                    "description": "IPs to query, comma-separated list allowed",
-                    "data_type": "string",
-                    "required": true,
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.ips",
-                    "data_type": "string",
-                    "example_values": [
-                        "71.6.135.131,111.111.111.111"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.code",
-                    "data_type": "string",
-                    "example_values": [
-                        "0x00",
-                        "0x01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.code_message",
-                    "data_type": "string",
-                    "example_values": [
-                        "The IP has never been observed scanning the Internet",
-                        "The IP has been observed by the GreyNoise sensor network"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.noise",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.riot",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise Multiple IP Lookup"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "on poll",
-            "description": "Get details on a specific GNQL query",
-            "type": "ingest",
-            "identifier": "on_poll",
-            "read_only": true,
-            "parameters": {
-                "start_time": {
-                    "data_type": "numeric",
-                    "description": "Parameter ignored in this app",
-                    "order": 0
-                },
-                "end_time": {
-                    "data_type": "numeric",
-                    "description": "Parameter ignored in this app",
-                    "order": 1
-                },
-                "container_count": {
-                    "data_type": "numeric",
-                    "description": "Maximum number of results to return for the on poll action",
-                    "order": 2
-                },
-                "artifact_count": {
-                    "data_type": "numeric",
-                    "description": "Parameter ignored in this app",
-                    "order": 3
-                }
-            },
-            "output": [],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "community lookup ip",
-            "description": "Lookup IP using GreyNoise's free community endpoint",
-            "verbose": "The Community API provides community users with a free tool to query IPs in the GreyNoise dataset and retrieve a subset of the full IP context data returned by the IP Lookup API.",
-            "type": "investigate",
-            "identifier": "community_lookup_ip",
-            "read_only": true,
-            "parameters": {
-                "ip": {
-                    "description": "IP to query",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "primary": true,
-                    "required": true,
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "example_values": [
-                        "71.6.135.131"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification",
-                    "data_type": "string",
-                    "example_values": [
-                        "benign",
-                        "malicious"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.last_seen",
-                    "data_type": "string",
-                    "example_values": [
-                        "2020-01-01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.link",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://viz.greynoise.io/riot/1.2.3.4"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Success",
-                        "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://greynoise.io/pricing."
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Cloudflare"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "type": "custom",
-                "view": "greynoise_view.report",
-                "title": "GreyNoise Community IP Lookup"
-            },
-            "versions": "EQ(*)"
-        }
-    ],
-    "pip3_dependencies": {
-        "wheel": [
-            {
-                "module": "Jinja2",
-                "input_file": "wheels/py3/Jinja2-3.0.3-py3-none-any.whl"
-            },
-            {
-                "module": "MarkupSafe",
-                "input_file": "wheels/py36/MarkupSafe-2.0.1-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
-            },
-            {
-                "module": "ansimarkup",
-                "input_file": "wheels/shared/ansimarkup-1.5.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-4.2.4-py3-none-any.whl"
-            },
-            {
-                "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "click",
-                "input_file": "wheels/py3/click-8.0.4-py3-none-any.whl"
-            },
-            {
-                "module": "click_default_group",
-                "input_file": "wheels/py3/click_default_group-1.2.2-py3-none-any.whl"
-            },
-            {
-                "module": "click_repl",
-                "input_file": "wheels/py3/click_repl-0.2.0-py3-none-any.whl"
-            },
-            {
-                "module": "colorama",
-                "input_file": "wheels/shared/colorama-0.4.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "dict2xml",
-                "input_file": "wheels/py3/dict2xml-1.7.1-py3-none-any.whl"
-            },
-            {
-                "module": "greynoise",
-                "input_file": "wheels/py3/greynoise-1.2.0-py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "importlib_metadata",
-                "input_file": "wheels/py3/importlib_metadata-4.8.3-py3-none-any.whl"
-            },
-            {
-                "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-8.12.0-py3-none-any.whl"
-            },
-            {
-                "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.28-py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "six",
-                "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "structlog",
-                "input_file": "wheels/py3/structlog-21.5.0-py3-none-any.whl"
-            },
-            {
-                "module": "typing_extensions",
-                "input_file": "wheels/py3/typing_extensions-4.1.1-py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "wcwidth",
-                "input_file": "wheels/shared/wcwidth-0.2.5-py2.py3-none-any.whl"
-            },
-            {
-                "module": "zipp",
-                "input_file": "wheels/py3/zipp-3.6.0-py3-none-any.whl"
-            }
-        ]
+    "on_poll_query": {
+      "description": "GNQL query to use for the on poll action",
+      "data_type": "string",
+      "default": "Please refer to the documentation",
+      "order": 1
     },
-    "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "certifi",
-                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "six",
-                "input_file": "wheels/six-1.15.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
-            }
-        ]
+    "on_poll_size": {
+      "description": "The number of results to return for the interval/schedule poll",
+      "data_type": "numeric",
+      "default": 25,
+      "order": 2
     },
-    "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "Jinja2",
-                "input_file": "wheels/py3/Jinja2-3.0.3-py3-none-any.whl"
-            },
-            {
-                "module": "MarkupSafe",
-                "input_file": "wheels/py39/MarkupSafe-2.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
-            },
-            {
-                "module": "ansimarkup",
-                "input_file": "wheels/shared/ansimarkup-1.5.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-5.0.0-py3-none-any.whl"
-            },
-            {
-                "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "click",
-                "input_file": "wheels/py3/click-8.0.4-py3-none-any.whl"
-            },
-            {
-                "module": "click_default_group",
-                "input_file": "wheels/py3/click_default_group-1.2.2-py3-none-any.whl"
-            },
-            {
-                "module": "click_repl",
-                "input_file": "wheels/py3/click_repl-0.2.0-py3-none-any.whl"
-            },
-            {
-                "module": "colorama",
-                "input_file": "wheels/shared/colorama-0.4.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "dict2xml",
-                "input_file": "wheels/py3/dict2xml-1.7.1-py3-none-any.whl"
-            },
-            {
-                "module": "greynoise",
-                "input_file": "wheels/py3/greynoise-1.2.0-py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-8.12.0-py3-none-any.whl"
-            },
-            {
-                "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.28-py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "six",
-                "input_file": "wheels/shared/six-1.15.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "structlog",
-                "input_file": "wheels/py3/structlog-21.5.0-py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "wcwidth",
-                "input_file": "wheels/shared/wcwidth-0.2.5-py2.py3-none-any.whl"
-            }
-        ]
+    "license_type": {
+      "description": "GreyNoise license type",
+      "data_type": "string",
+      "value_list": [
+        "enterprise",
+        "community"
+      ],
+      "default": "enterprise",
+      "order": 3
     }
+  },
+  "actions": [
+    {
+      "action": "test connectivity",
+      "description": "Validate the asset configuration for connectivity using the supplied configuration",
+      "verbose": "Tests the connection to the paid GreyNoise API.",
+      "type": "test",
+      "identifier": "test_connectivity",
+      "read_only": true,
+      "parameters": {},
+      "output": [],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "lookup ip",
+      "description": "Lookup IP using GreyNoise API Quick Check Endpoint",
+      "type": "investigate",
+      "identifier": "lookup_ip",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to query",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.code",
+          "data_type": "string",
+          "example_values": [
+            "0x00",
+            "0x01"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.code_message",
+          "data_type": "string",
+          "example_values": [
+            "The IP has never been observed scanning the Internet",
+            "The IP has been observed by the GreyNoise sensor network"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.noise",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.riot",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise IP Lookup"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "riot lookup ip",
+      "description": "Lookup IP using GreyNoise's RIOT endpoint",
+      "verbose": "RIOT identifies IPs from known benign services and organizations that commonly cause false positives in network security and threat intelligence products. The collection of IPs in RIOT is continually curated and verified to provide accurate results.",
+      "type": "investigate",
+      "identifier": "riot_lookup_ip",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to query",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.category",
+          "data_type": "string",
+          "example_values": [
+            "public_dns"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.description",
+          "data_type": "string",
+          "example_values": [
+            "Global domain name system (DNS) resolution service."
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.explanation",
+          "data_type": "string",
+          "example_values": [
+            "Public DNS services are used as alternatives to ISP's name servers. You may see devices on your network communicating with Public DNS over port XX/TCP or XX/UDP to resolve DNS lookups."
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.last_updated",
+          "data_type": "string",
+          "example_values": [
+            "2021-05-26T17:55:35Z"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.logo_url",
+          "data_type": "string",
+          "contains": [
+            "url"
+          ],
+          "example_values": [
+            "https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.name",
+          "data_type": "string",
+          "example_values": [
+            "Public DNS"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.reference",
+          "data_type": "string",
+          "contains": [
+            "url"
+          ],
+          "example_values": [
+            "https://developers.google.com/speed/public-dns/docs/isp#alternative"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise RIOT IP Lookup"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "ip reputation",
+      "description": "Get full GreyNoise reputation and context for a specific IP",
+      "verbose": "Get more information about a given IP address. Returns time ranges, IP metadata (network owner, ASN, reverse DNS pointer, country), associated actors, activity tags, raw port scan, and web request information.",
+      "type": "investigate",
+      "identifier": "ip_reputation",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to query",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.actor",
+          "data_type": "string",
+          "example_values": [
+            "Shodan.io"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.classification",
+          "data_type": "string",
+          "example_values": [
+            "benign",
+            "malicious"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.first_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-12-25"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.last_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-12-25"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.metadata.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.raw_data.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.seen",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.tags.*",
+          "data_type": "string",
+          "example_values": [
+            "Mirai",
+            "Telnet Worm"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise IP Reputation"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "gnql query",
+      "description": "Use the GreyNoise Query Language to run a query",
+      "verbose": "Please refer to <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://docs.greynoise.io/reference/gnqlquery-1\">https://docs.greynoise.io/reference/gnqlquery-1/a> for further information.",
+      "type": "investigate",
+      "identifier": "gnql_query",
+      "read_only": true,
+      "parameters": {
+        "query": {
+          "description": "GNQL query",
+          "data_type": "string",
+          "contains": [
+            "greynoise query"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        },
+        "size": {
+          "description": "The number of results to return (warning: returning over 1000 results may degrade widget performance)",
+          "data_type": "numeric",
+          "required": true,
+          "default": 100,
+          "order": 1
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.query",
+          "data_type": "string",
+          "contains": [
+            "greynoise query"
+          ],
+          "example_values": [
+            "metadata.organization:your_organization classification:malicious",
+            "8.0.0.0/8"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.size",
+          "data_type": "numeric",
+          "example_values": [
+            1000
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.actor",
+          "data_type": "string",
+          "example_values": [
+            "Shodan.io"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.classification",
+          "data_type": "string",
+          "example_values": [
+            "benign",
+            "malicious"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.first_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-12-25"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.last_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-12-25"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.metadata.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.raw_data.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.seen",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.tags.*",
+          "data_type": "string",
+          "example_values": [
+            "Mirai",
+            "Telnet Worm"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise Run Query"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "lookup ips",
+      "description": "Lookup IPs using GreyNoise API Multi Quick Check Endpoint (comma-separated, limit 500 per request)",
+      "verbose": "Returns quick check information for multiple IPs.",
+      "type": "investigate",
+      "identifier": "lookup_ips",
+      "read_only": true,
+      "parameters": {
+        "ips": {
+          "description": "IPs to query, comma-separated list allowed",
+          "data_type": "string",
+          "required": true,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ips",
+          "data_type": "string",
+          "example_values": [
+            "71.6.135.131,111.111.111.111"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.code",
+          "data_type": "string",
+          "example_values": [
+            "0x00",
+            "0x01"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.code_message",
+          "data_type": "string",
+          "example_values": [
+            "The IP has never been observed scanning the Internet",
+            "The IP has been observed by the GreyNoise sensor network"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.noise",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.riot",
+          "data_type": "boolean",
+          "example_values": [
+            true,
+            false
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise Multiple IP Lookup"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "on poll",
+      "description": "Get details on a specific GNQL query",
+      "type": "ingest",
+      "identifier": "on_poll",
+      "read_only": true,
+      "parameters": {
+        "start_time": {
+          "data_type": "numeric",
+          "description": "Parameter ignored in this app",
+          "order": 0
+        },
+        "end_time": {
+          "data_type": "numeric",
+          "description": "Parameter ignored in this app",
+          "order": 1
+        },
+        "container_count": {
+          "data_type": "numeric",
+          "description": "Maximum number of results to return for the on poll action",
+          "order": 2
+        },
+        "artifact_count": {
+          "data_type": "numeric",
+          "description": "Parameter ignored in this app",
+          "order": 3
+        }
+      },
+      "output": [],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "community lookup ip",
+      "description": "Lookup IP using GreyNoise's free community endpoint",
+      "verbose": "The Community API provides community users with a free tool to query IPs in the GreyNoise dataset and retrieve a subset of the full IP context data returned by the IP Lookup API.",
+      "type": "investigate",
+      "identifier": "community_lookup_ip",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to query",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.classification",
+          "data_type": "string",
+          "example_values": [
+            "benign",
+            "malicious"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.last_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-01-01"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.link",
+          "data_type": "string",
+          "contains": [
+            "url"
+          ],
+          "example_values": [
+            "https://viz.greynoise.io/riot/1.2.3.4"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.message",
+          "data_type": "string",
+          "example_values": [
+            "Success",
+            "You have hit your daily rate limit of 100 requests per day. Please create a free account or upgrade your plan at https://greynoise.io/pricing."
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.name",
+          "data_type": "string",
+          "example_values": [
+            "Cloudflare"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise Community IP Lookup"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "similar noise ips",
+      "description": "Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool",
+      "verbose": "The GreyNoise IP Similarity tool allows for analysts to identify IP addresses within the GreyNoise internet scanning dataset that are using a similar scanning profile.",
+      "type": "investigate",
+      "identifier": "lookup_similar_ips",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to find Similar IPs for",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        },
+        "min_score": {
+          "description": "The minimum score to return matches for, recommended is 90.",
+          "data_type": "numeric",
+          "required": true,
+          "default": 90,
+          "order": 1
+        },
+        "limit": {
+          "description": "The maximum number of similar IP results to return.",
+          "data_type": "numeric",
+          "required": true,
+          "default": 50,
+          "order": 2
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.min_score",
+          "data_type": "numeric",
+          "example_values": [
+            90
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.limit",
+          "data_type": "numeric",
+          "example_values": [
+            50
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.actor",
+          "data_type": "string",
+          "example_values": [
+            "Shodan.io",
+            "Censys"
+          ]
+        },{
+          "data_path": "action_result.data.*.classification",
+          "data_type": "string",
+          "example_values": [
+            "benign",
+            "malicious"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.fist_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-01-01"
+          ]
+        },{
+          "data_path": "action_result.data.*.last_seen",
+          "data_type": "string",
+          "example_values": [
+            "2020-01-01"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.asn",
+          "data_type": "string",
+          "example_values": [
+            "AS2345",
+            "AS62432"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.city",
+          "data_type": "string",
+          "example_values": [
+            "New York",
+            "Houston"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.country",
+          "data_type": "string",
+          "example_values": [
+            "United States",
+            "Canada"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.country_code",
+          "data_type": "string",
+          "example_values": [
+            "US",
+            "CA"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.organization",
+          "data_type": "string",
+          "example_values": [
+            "Microsoft",
+            "Acme, Inc"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.similar_ips.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise Similar IPs"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "noise ip timeline",
+      "description": "Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool",
+      "verbose": "The GreyNoise IP Similarity tool allows for analysts to identify IP addresses within the GreyNoise internet scanning dataset that are using a similar scanning profile.",
+      "type": "investigate",
+      "identifier": "lookup_ip_timeline",
+      "read_only": true,
+      "parameters": {
+        "ip": {
+          "description": "IP to get timeline information",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "primary": true,
+          "required": true,
+          "order": 0
+        },
+        "days": {
+          "description": "The maximum number of days to pull timeline data",
+          "data_type": "numeric",
+          "required": true,
+          "default": 30,
+          "order": 1
+        },
+        "limit": {
+          "description": "The maximum number of results to return.",
+          "data_type": "numeric",
+          "required": true,
+          "default": 50,
+          "order": 2
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "example_values": [
+            "71.6.135.131"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.days",
+          "data_type": "numeric",
+          "example_values": [
+            30
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.limit",
+          "data_type": "numeric",
+          "example_values": [
+            50
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.metadata.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.activity.*",
+          "data_type": "string",
+          "example_values": [
+            "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "example_values": [
+            "success",
+            "failed"
+          ]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        }
+      ],
+      "render": {
+        "type": "custom",
+        "view": "greynoise_view.report",
+        "title": "GreyNoise IP Timeline"
+      },
+      "versions": "EQ(*)"
+    }
+  ],
+  "pip3_dependencies": {
+    "wheel": [
+      {
+        "module": "greynoise",
+        "input_file": "wheels/greynoise-2.0.0-py3-none-any.whl"
+      },
+      {
+        "module": "cachetools",
+        "input_file": "wheels/cachetools-5.3.0-py3-none-any.whl"
+      },
+      {
+        "module": "more_itertools",
+        "input_file": "wheels/more_itertools-9.1.0-py3-none-any.whl"
+      },
+      {
+        "module": "click",
+        "input_file": "wheels/click-8.1.3-py3-none-any.whl"
+      },
+      {
+        "module": "ansimarkup",
+        "input_file": "wheels/ansimarkup-1.5.0-py2.py3-none-any.whl"
+      },
+      {
+        "module": "colorama",
+        "input_file": "wheels/colorama-0.4.6-py2.py3-none-any.whl"
+      },
+      {
+        "module": "click-default-group",
+        "input_file": "wheels/click_default_group-1.2.2-py3-none-any.whl"
+      },
+      {
+        "module": "click-repl",
+        "input_file": "wheels/click_repl-0.2.0-py3-none-any.whl"
+      },
+      {
+        "module": "dict2xml",
+        "input_file": "wheels/dict2xml-1.7.3-py3-none-any.whl"
+      },
+      {
+        "module": "ipaddress",
+        "input_file": "wheels/ipaddress-1.0.23-py2.py3-none-any.whl"
+      },
+      {
+        "module": "jinja2",
+        "input_file": "wheels/Jinja2-3.1.2-py3-none-any.whl"
+      },
+      {
+        "module": "requests",
+        "input_file": "wheels/requests-2.28.2-py3-none-any.whl"
+      },
+      {
+        "module": "six",
+        "input_file": "wheels/six-1.16.0-py2.py3-none-any.whl"
+      },
+      {
+        "module": "urllib3",
+        "input_file": "wheels/urllib3-1.26.15-py2.py3-none-any.whl"
+      }
+    ]
+  }
 }

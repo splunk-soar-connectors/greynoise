@@ -15,10 +15,10 @@
 
 # URLs
 API_KEY_CHECK_URL = "https://api.greynoise.io/ping"  # pragma: allowlist secret
-VISUALIZATION_URL = "https://www.greynoise.io/viz/ip/{ip}"
-GREYNOISE_ACTION_HANDLER_MSG = "In action handler for: {identifier}"
-GREYNOISE_ERR_INVALID_FIELDS = "Please provide a valid value in the '{field}' parameter"
-GREYNOISE_ERR_INVALID_IP = "Validation failed for IP '{ip}'"
+VISUALIZATION_URL = "https://viz.greynoise.io/ip/{ip}"
+GREYNOISE_ACTION_HANDLER_MESSAGE = "In action handler for: {identifier}"
+GREYNOISE_ERROR_INVALID_FIELDS = "Please provide a valid value in the '{field}' parameter"
+GREYNOISE_ERROR_INVALID_IP = "Validation failed for IP '{ip}'"
 
 TRUST_LEVELS = {
     "1": "1 - Reasonably Ignore",
@@ -30,17 +30,17 @@ SIZE_ACTION_PARAM = "'size' action parameter"
 GREYNOISE_DEFAULT_TIMEOUT = 30
 
 # Integer validation constants
-VALID_INTEGER_MSG = "Please provide a valid integer value in the {key}"
-NON_NEGATIVE_INTEGER_MSG = "Please provide a valid non-negative integer value in the {key}"
-NON_NEG_NON_ZERO_INT_MSG = "Please provide a valid non-zero positive integer value in the {key}"
+VALID_INTEGER_MESSAGE = "Please provide a valid integer value in the {key}"
+NON_NEGATIVE_INTEGER_MESSAGE = "Please provide a valid non-negative integer value in the {key}"
+NON_NEG_NON_ZERO_INT_MESSAGE = "Please provide a valid non-zero positive integer value in the {key}"
 
 # exception handling
-ERR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
+ERROR_MESSAGE_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
 
 ERROR_MESSAGE = "Error occurred making API request"
-INTERNAL_IP_ERROR_MESSAGE = "Error occured, IP is an internal IP"
+INTERNAL_IP_ERROR_MESSAGE = "Error occurred, IP is an internal IP"
 API_PARSE_ERROR_MESSAGE = "Error occurred while processing API response"
 
-GREYNOISE_STATE_FILE_CORRUPT_ERR = (
+GREYNOISE_STATE_FILE_CORRUPT_ERROR = (
     "Error occurred while loading the state file due to its unexpected format. "
     "Resetting the state file with the default format. Please try again.")

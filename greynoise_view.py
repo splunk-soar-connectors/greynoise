@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def _parse_data(data, param):
+def _parse_data(data, param):  # noqa: C901
 
     try:
         res = {}
@@ -31,7 +31,8 @@ def _parse_data(data, param):
                 res['code_message'] = item['code_message']
                 res['visualization'] = item['visualization']
         # parsing data for community action
-        elif 'ip' in param.keys() and (("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
+        elif 'ip' in param.keys() and (
+                ("riot" in data[0].keys() and "noise" in data[0].keys()) or "plan" in data[0].keys()):
             if "plan" in data[0].keys():
                 for item in data:
                     res['plan'] = item['plan']
@@ -56,7 +57,8 @@ def _parse_data(data, param):
                     res['message'] = item['message']
                     res['community_not_found'] = item['community_not_found']
         # parsing data for riot action
-        elif 'ip' in param.keys() and (("riot" in data[0].keys() and "category" in data[0].keys()) or "riot_unseen" in data[0].keys()):
+        elif 'ip' in param.keys() and (
+                ("riot" in data[0].keys() and "category" in data[0].keys()) or "riot_unseen" in data[0].keys()):
             if "riot_unseen" in data[0].keys():
                 for item in data:
                     res['ip'] = item['ip']
@@ -94,24 +96,74 @@ def _parse_data(data, param):
                 res['first_seen'] = "This IP has never been seen scanning the internet"
                 res['last_seen'] = "This IP has never been seen scanning the internet"
             else:
-                for item in data:
-                    res['ip'] = item['ip']
-                    res['seen'] = item['seen']
-                    res['classification'] = item['classification']
-                    res['first_seen'] = item['first_seen']
-                    res['last_seen'] = item['last_seen']
-                    res['visualization'] = item['visualization']
-                    res['actor'] = item['actor']
-                    res['organization'] = item['metadata']['organization']
-                    res['asn'] = item['metadata']['asn']
-                    if item['metadata']['country']:
-                        res['country'] = item['metadata']['country']
-                    if item['metadata']['city']:
-                        res['city'] = item['metadata']['city']
-                    res['tags'] = item['tags']
-                    res['viz_tags'] = ", ".join(item['tags'])
-                    res['cve'] = ", ".join(item['cve'])
-
+                res['ip'] = data[0]['ip']
+                res['seen'] = data[0]['seen']
+                res['classification'] = data[0]['classification']
+                res['first_seen'] = data[0]['first_seen']
+                res['last_seen'] = data[0]['last_seen']
+                res['visualization'] = data[0]['visualization']
+                res['actor'] = data[0]['actor']
+                res['organization'] = data[0]['metadata']['organization']
+                res['asn'] = data[0]['metadata']['asn']
+                if data[0]['metadata']['country']:
+                    res['country'] = data[0]['metadata']['country']
+                if data[0]['metadata']['destination_countries']:
+                    res['destination_countries'] = ', '.join(data[0]['metadata']['destination_countries'])
+                if data[0]['metadata']['city']:
+                    res['city'] = data[0]['metadata']['city']
+                res['tags'] = data[0]['tags']
+                res['viz_tags'] = ", ".join(data[0]['tags'])
+                res['cve'] = ", ".join(data[0]['cve'])
+        # parse ip timeline data
+        elif 'ip' in param.keys() and 'activity' in data[0].keys():
+            if "message" in data[0] and "Not allowed" in data[0]["message"]:
+                res['ip'] = param["ip"]
+                res['message'] = data[0]["message"]
+            elif not data[0]["activity"]:
+                res['ip'] = param["ip"]
+                res['message'] = "No Timeline Data Available"
+            else:
+                for item in data[0]["activity"]:
+                    item["timestamp"] = item["timestamp"].split("T")[0]
+                    item["http_user_agents"] = ', '.join(item["http_user_agents"])
+                    item["http_paths"] = ', '.join(item["http_paths"])
+                    tags = []
+                    for tag in item["tags"]:
+                        tags.append(tag["name"])
+                    item["tags"] = ', '.join(tags)
+                    ports = []
+                    for protocol in item["protocols"]:
+                        ports.append(str(protocol["port"]) + "/" + str(protocol["transport_protocol"]))
+                    item["protocols"] = ', '.join(ports)
+                res['ip'] = data[0]["metadata"]["ip"]
+                res['start_time'] = data[0]["metadata"]["start_time"]
+                res['end_time'] = data[0]["metadata"]["end_time"]
+                res["activity"] = data[0]["activity"]
+                res["message"] = f"Show {param['days']} days of daily scanning activity for {param['ip']}"
+                res["link"] = f"https://viz.greynoise.io/ip/{param['ip']}?view=timeline"
+        # parse ip sim data
+        elif 'ip' in param.keys() and 'similar_ips' in data[0].keys():
+            if "message" in data[0]:
+                res['ip'] = param["ip"]
+                res['message'] = data[0]["message"]
+            elif data[0]["total"] == 0:
+                res['ip'] = param["ip"]
+                res['message'] = "No Similar IPs Found"
+            else:
+                for item in data[0]["similar_ips"]:
+                    item["features"] = ', '.join(item["features"])
+                    item["score"] = str(int(item["score"] * 100)) + "%"
+                res['ip'] = data[0]["ip"]["ip"]
+                res["similar_ips"] = data[0]["similar_ips"]
+                res["link"] = f"https://viz.greynoise.io/ip-similarity/{param['ip']}"
+                if data[0]["total"] > param['limit']:
+                    res[
+                        "message"] = f"Showing first {param['limit']} IPs of {data[0]['total']} IPs that have a " \
+                                     f"similarity score of {param['min_score']}% or above to {param['ip']} "
+                else:
+                    res[
+                        "message"] = f"Showing {data[0]['total']} IPs that have a " \
+                                     f"similarity score of {param['min_score']}% or above to {param['ip']} "
         # parsing data for gnql query
         elif 'query' in param.keys():
             gnql_list = []
@@ -131,6 +183,8 @@ def _parse_data(data, param):
                     temp_dict['asn'] = item['metadata']['asn']
                     if item['metadata']['country']:
                         temp_dict['country'] = item['metadata']['country']
+                    if item['metadata']['destination_countries']:
+                        temp_dict['destination_countries'] = ', '.join(item['metadata']['destination_countries'])
                     if item['metadata']['city']:
                         temp_dict['city'] = item['metadata']['city']
                     temp_dict['tags'] = item['tags']
