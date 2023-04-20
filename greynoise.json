@@ -483,14 +483,14 @@
           "data_path": "action_result.data.*.raw_data.scan.*",
           "data_type": "string",
           "example_values": [
-            "[\n{\n\"port\":23,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":80,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":8080,\n\"protocol\":\"TCP\"\n}\n],"
+            "[\n{\n\"port\":23,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":80,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":8080,\n\"protocol\":\"TCP\"\n}\n]"
           ]
         },
         {
           "data_path": "action_result.data.*.raw_data.web.*",
           "data_type": "string",
           "example_values": [
-            "{\n\"paths\":[\n\"/\"\n],\n\"useragents\":[\n\"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36\"\n]\n}\n"
+            "{\n\"paths\":[\n\"/\"\n],\n\"useragents\":[\n\"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36\"\n]\n}"
           ]
         },
         {
