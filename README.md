@@ -2,7 +2,7 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise  
-Connector Version: 2.3.0  
+Connector Version: 2.3.1  
 Product Vendor: GreyNoise  
 Product Name: GreyNoise  
 Product Version Supported (regex): ".\*"  
@@ -208,9 +208,10 @@ action_result.data.\*.category | string |  |   public_dns
 action_result.data.\*.description | string |  |   Global domain name system (DNS) resolution service. 
 action_result.data.\*.explanation | string |  |   Public DNS services are used as alternatives to ISP's name servers. You may see devices on your network communicating with Public DNS over port XX/TCP or XX/UDP to resolve DNS lookups. 
 action_result.data.\*.last_updated | string |  |   2021-05-26T17:55:35Z 
-action_result.data.\*.logo_url | string |  `url`  |   https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg 
 action_result.data.\*.name | string |  |   Public DNS 
 action_result.data.\*.reference | string |  `url`  |   https://developers.google.com/speed/public-dns/docs/isp#alternative 
+action_result.data.\*.riot | boolean |  |   True  False 
+action_result.data.\*.trust_level | string |  |   1  2 
 action_result.status | string |  |   success  failed 
 action_result.message | string |  |  
 action_result.summary | string |  |  
@@ -235,7 +236,9 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.parameter.ip | string |  `ip`  |   71.6.135.131 
 action_result.data.\*.actor | string |  |   Shodan.io 
+action_result.data.\*.bot | boolean |  |   True  False 
 action_result.data.\*.classification | string |  |   benign  malicious 
+action_result.data.\*.cve.\* | string |  |   CVE-2021-12345  CVE-2023-5678 
 action_result.data.\*.first_seen | string |  |   2020-12-25 
 action_result.data.\*.last_seen | string |  |   2020-12-25 
 action_result.data.\*.metadata.\* | string |  |   {
@@ -249,6 +252,18 @@ action_result.data.\*.metadata.\* | string |  |   {
 "category":"education"
 "os":"Windows 7/8"
 } 
+action_result.data.\*.metadata.asn | string |  |   AS12345 
+action_result.data.\*.metadata.category | string |  |   isp 
+action_result.data.\*.metadata.city | string |  |   Madrid 
+action_result.data.\*.metadata.destination_countries.\* | string |  |   Spain  United Kingdom  Turkey 
+action_result.data.\*.metadata.destination_country_codes.\* | string |  |   ES  GB  TR 
+action_result.data.\*.metadata.organization | string |  |   Acme, Inc 
+action_result.data.\*.metadata.os | string |  |   Linux 3 
+action_result.data.\*.metadata.rdns | string |  |   bot.acme.lcl 
+action_result.data.\*.metadata.region | string |  |   Madrid 
+action_result.data.\*.metadata.source_country | string |  |   Spain 
+action_result.data.\*.metadata.source_country_code | string |  |   ES 
+action_result.data.\*.metadata.tor | boolean |  |   True  False 
 action_result.data.\*.raw_data.\* | string |  |   {
 "scan":[
 0:{
@@ -271,8 +286,41 @@ action_result.data.\*.raw_data.\* | string |  |   {
 }
 ]
 } 
+action_result.data.\*.raw_data.hassh.\* | string |  |   [{
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"port":443
+}] 
+action_result.data.\*.raw_data.ja3.\* | string |  |   [{
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"port":443
+}] 
+action_result.data.\*.raw_data.scan.\* | string |  |   [
+{
+"port":23,
+"protocol":"TCP"
+},
+{
+"port":80,
+"protocol":"TCP"
+},
+{
+"port":8080,
+"protocol":"TCP"
+}
+] 
+action_result.data.\*.raw_data.web.\* | string |  |   {
+"paths":[
+"/"
+],
+"useragents":[
+"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
+]
+} 
 action_result.data.\*.seen | boolean |  |   True  False 
+action_result.data.\*.spoofable | boolean |  |   True  False 
 action_result.data.\*.tags.\* | string |  |   Mirai  Telnet Worm 
+action_result.data.\*.vpn | boolean |  |   True  False 
+action_result.data.\*.vpn_service | string |  |   PRETTY_VPN 
 action_result.status | string |  |   success  failed 
 action_result.message | string |  |  
 action_result.summary | string |  |  
