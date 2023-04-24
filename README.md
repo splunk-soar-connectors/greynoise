@@ -2,7 +2,7 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise  
-Connector Version: 2.3.0  
+Connector Version: 2.3.1  
 Product Vendor: GreyNoise  
 Product Name: GreyNoise  
 Product Version Supported (regex): ".\*"  
@@ -12,7 +12,7 @@ This app provides investigative capabilities using the GreyNoise plugin
 
 [comment]: # " File: README.md"
 [comment]: # ""
-[comment]: # "  Copyright (c) GreyNoise, 2019-2022."
+[comment]: # "  Copyright (c) GreyNoise, 2019-2023."
 [comment]: # ""
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "  you may not use this file except in compliance with the License."
@@ -202,20 +202,21 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
---------- | ---- | -------- | --------------
-action_result.parameter.ip | string |  `ip`  |   71.6.135.131 
-action_result.data.\*.category | string |  |   public_dns 
-action_result.data.\*.description | string |  |   Global domain name system (DNS) resolution service. 
-action_result.data.\*.explanation | string |  |   Public DNS services are used as alternatives to ISP's name servers. You may see devices on your network communicating with Public DNS over port XX/TCP or XX/UDP to resolve DNS lookups. 
-action_result.data.\*.last_updated | string |  |   2021-05-26T17:55:35Z 
-action_result.data.\*.logo_url | string |  `url`  |   https://www.gstatic.com/devrel-devsite/prod/v9d82702993bc22f782b7874a0f933b5e39c1f0889acab7d1fce0d6deb8e0f63d/cloud/images/cloud-logo.svg 
-action_result.data.\*.name | string |  |   Public DNS 
-action_result.data.\*.reference | string |  `url`  |   https://developers.google.com/speed/public-dns/docs/isp#alternative 
-action_result.status | string |  |   success  failed 
-action_result.message | string |  |  
-action_result.summary | string |  |  
-summary.total_objects | numeric |  |   1 
-summary.total_objects_successful | numeric |  |   1   
+--------- | ---- |----------| --------------
+action_result.parameter.ip | string | `ip`     |   71.6.135.131 
+action_result.data.\*.category | string |          |   public_dns 
+action_result.data.\*.description | string |          |   Global domain name system (DNS) resolution service. 
+action_result.data.\*.explanation | string |          |   Public DNS services are used as alternatives to ISP's name servers. You may see devices on your network communicating with Public DNS over port XX/TCP or XX/UDP to resolve DNS lookups. 
+action_result.data.\*.last_updated | string |          |   2021-05-26T17:55:35Z
+action_result.data.\*.name | string |          |   Public DNS 
+action_result.data.\*.reference | string | `url`    |   https://developers.google.com/speed/public-dns/docs/isp#alternative 
+action_result.data.\*.riot | boolean |          |   true
+action_result.data.\*.trust_level | string |          |   "1"
+action_result.status | string |          |   success  failed 
+action_result.message | string |          |  
+action_result.summary | string |          |  
+summary.total_objects | numeric |          |   1 
+summary.total_objects_successful | numeric |          |   1   
 
 ## action: 'ip reputation'
 Get full GreyNoise reputation and context for a specific IP
@@ -235,44 +236,34 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.parameter.ip | string |  `ip`  |   71.6.135.131 
 action_result.data.\*.actor | string |  |   Shodan.io 
+action_result.data.\*.bot | boolean |  |   True  False 
 action_result.data.\*.classification | string |  |   benign  malicious 
+action_result.data.\*.cve.\* | string |  |   CVE-2021-10234  CVE-2023-13435 
 action_result.data.\*.first_seen | string |  |   2020-12-25 
 action_result.data.\*.last_seen | string |  |   2020-12-25 
-action_result.data.\*.metadata.\* | string |  |   {
-"country":"United States"
-"country_code":"US"
-"city":"Seattle"
-"organization":"Org. Name"
-"rdns":"crawl-66-249-79-17.testbot.com"
-"asn":"AS521"
-"tor":false
-"category":"education"
-"os":"Windows 7/8"
-} 
-action_result.data.\*.raw_data.\* | string |  |   {
-"scan":[
-0:{
-"port":80
-"protocol":"TCP"
-}
-]
-"web":{
-"paths":[
-0:"/robots.txt"
-]
-"useragents":[
-0:"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)"
-]
-}
-"ja3":[
-0:{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
-"port":443
-}
-]
-} 
+action_result.data.\*.metadata.\* | string |  |   "{\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}"
+action_result.data.\*.metadata.asn | string |  |   AS12345
+action_result.data.\*.metadata.category | string |  |   isp
+action_result.data.\*.metadata.city | string |  |   Madrid
+action_result.data.\*.metadata.destination_countries.\* | string |  |   Spain Turkey
+action_result.data.\*.metadata.destination_country_codes.\* | string |  |   ES TR
+action_result.data.\*.metadata.organization | string |  |   Acme, Inc.
+action_result.data.\*.metadata.os | string |  |   Linux 3
+action_result.data.\*.metadata.rdns | string |  |   bot.acme.lcl
+action_result.data.\*.metadata.region | string |  |   Madrid
+action_result.data.\*.metadata.source_country | string |  |   Spain
+action_result.data.\*.metadata.source_country_code | string |  |   ES
+action_result.data.\*.metadata.tor | boolen |  |   TRUE FALSE
+action_result.data.\*.raw_data.\* | string |  |   {\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}
+action_result.data.\*.raw_data.hassh.\* | string |  |   [{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}]
+action_result.data.\*.raw_data.ja3.\* | string |  |   [{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}]
+action_result.data.\*.raw_data.scan.\* | string |  |   [\n{\n\"port\":23,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":80,\n\"protocol\":\"TCP\"\n},\n{\n\"port\":8080,\n\"protocol\":\"TCP\"\n}\n]
+action_result.data.\*.raw_data.web.\* | string |  |   {\n\"paths\":[\n\"/\"\n],\n\"useragents\":[\n\"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36\"\n]\n}
 action_result.data.\*.seen | boolean |  |   True  False 
+action_result.data.\*.spoofable | boolean |  |   True  False 
 action_result.data.\*.tags.\* | string |  |   Mirai  Telnet Worm 
+action_result.data.\*.vpn | boolean |  |   True  False 
+action_result.data.\*.vpn_service | string |  |   PRETTY_VPN
 action_result.status | string |  |   success  failed 
 action_result.message | string |  |  
 action_result.summary | string |  |  
@@ -303,39 +294,8 @@ action_result.data.\*.classification | string |  |   benign  malicious
 action_result.data.\*.first_seen | string |  |   2020-12-25 
 action_result.data.\*.ip | string |  `ip`  |   71.6.135.131 
 action_result.data.\*.last_seen | string |  |   2020-12-25 
-action_result.data.\*.metadata.\* | string |  |   {
-"country":"United States"
-"country_code":"US"
-"city":"Seattle"
-"organization":"Org. Name"
-"rdns":"crawl-66-249-79-17.testbot.com"
-"asn":"AS521"
-"tor":false
-"category":"education"
-"os":"Windows 7/8"
-} 
-action_result.data.\*.raw_data.\* | string |  |   {
-"scan":[
-0:{
-"port":80
-"protocol":"TCP"
-}
-]
-"web":{
-"paths":[
-0:"/robots.txt"
-]
-"useragents":[
-0:"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)"
-]
-}
-"ja3":[
-0:{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
-"port":443
-}
-]
-} 
+action_result.data.\*.metadata.\* | string |  |   {\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}
+action_result.data.\*.raw_data.\* | string |  |   {\n\"scan\":[\n0:{\n\"port\":80\n\"protocol\":\"TCP\"\n}\n]\n\"web\":{\n\"paths\":[\n0:\"/robots.txt\"\n]\n\"useragents\":[\n0:\"test/5.0 (compatible; testbot/2.1; +http://www.test.com/bot.html)\"\n]\n}\n\"ja3\":[\n0:{\n\"fingerprint\":\"c3a6cf0bf2e690ac8e1ecf6081f17a50\"\n\"port\":443\n}\n]\n}
 action_result.data.\*.seen | boolean |  |   True  False 
 action_result.data.\*.tags.\* | string |  |   Mirai  Telnet Worm 
 action_result.status | string |  |   success  failed 
@@ -484,28 +444,8 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.parameter.ip | string |  `ip`  |   71.6.135.131 
 action_result.parameter.days | numeric |  |   30 
 action_result.parameter.limit | numeric |  |   50 
-action_result.data.\*.metadata.\* | string |  |   {
-"country":"United States"
-"country_code":"US"
-"city":"Seattle"
-"organization":"Org. Name"
-"rdns":"crawl-66-249-79-17.testbot.com"
-"asn":"AS521"
-"tor":false
-"category":"education"
-"os":"Windows 7/8"
-} 
-action_result.data.\*.activity.\* | string |  |   {
-"country":"United States"
-"country_code":"US"
-"city":"Seattle"
-"organization":"Org. Name"
-"rdns":"crawl-66-249-79-17.testbot.com"
-"asn":"AS521"
-"tor":false
-"category":"education"
-"os":"Windows 7/8"
-} 
+action_result.data.\*.metadata.\* | string |  |   {\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}
+action_result.data.\*.activity.\* | string |  |   {\n\"country\":\"United States\"\n\"country_code\":\"US\"\n\"city\":\"Seattle\"\n\"organization\":\"Org. Name\"\n\"rdns\":\"crawl-66-249-79-17.testbot.com\"\n\"asn\":\"AS521\"\n\"tor\":false\n\"category\":\"education\"\n\"os\":\"Windows 7/8\"\n}
 action_result.status | string |  |   success  failed 
 action_result.message | string |  |  
 action_result.summary | string |  |  
