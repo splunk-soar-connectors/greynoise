@@ -11,11 +11,11 @@
   "product_version_regex": ".*",
   "publisher": "GreyNoise",
   "license": "Copyright (c) GreyNoise, 2019-2022",
-  "app_version": "2.3.1",
+  "app_version": "2.3.2",
   "utctime_updated": "2023-03-14T00:00:00.000000Z",
   "package_name": "phantom_greynoise",
   "main_module": "greynoise_connector.py",
-  "min_phantom_version": "5.3.0",
+  "min_phantom_version": "5.5.0",
   "fips_compliant": false,
   "configuration": {
     "api_key": {
@@ -1240,7 +1240,7 @@
     "wheel": [
       {
         "module": "greynoise",
-        "input_file": "wheels/greynoise-2.0.0-py3-none-any.whl"
+        "input_file": "wheels/greynoise-2.0.1-py3-none-any.whl"
       },
       {
         "module": "cachetools",
@@ -1259,6 +1259,14 @@
         "input_file": "wheels/ansimarkup-1.5.0-py2.py3-none-any.whl"
       },
       {
+        "module": "certifi",
+        "input_file": "wheels/certifi-2023.5.7-py3-none-any.whl"
+      },
+      {
+        "module": "charset_normalizer",
+        "input_file": "wheels/charset_normalizer-3.1.0-cp39-cp39-macosx_10_9_x86_64.whl"
+      },
+      {
         "module": "colorama",
         "input_file": "wheels/colorama-0.4.6-py2.py3-none-any.whl"
       },
@@ -1275,6 +1283,10 @@
         "input_file": "wheels/dict2xml-1.7.3-py3-none-any.whl"
       },
       {
+        "module": "idna",
+        "input_file": "wheels/idna-3.4-py3-none-any.whl"
+      },
+      {
         "module": "ipaddress",
         "input_file": "wheels/ipaddress-1.0.23-py2.py3-none-any.whl"
       },
@@ -1283,8 +1295,16 @@
         "input_file": "wheels/Jinja2-3.1.2-py3-none-any.whl"
       },
       {
+        "module": "MarkupSafe",
+        "input_file": "wheels/MarkupSafe-2.1.2-cp39-cp39-macosx_10_9_x86_64.whl"
+      },
+      {
+        "module": "prompt_toolkit",
+        "input_file": "wheels/prompt_toolkit-3.0.38-py3-none-any.whl"
+      },
+      {
         "module": "requests",
-        "input_file": "wheels/requests-2.28.2-py3-none-any.whl"
+        "input_file": "wheels/requests-2.30.0-py3-none-any.whl"
       },
       {
         "module": "six",
@@ -1292,7 +1312,11 @@
       },
       {
         "module": "urllib3",
-        "input_file": "wheels/urllib3-1.26.15-py2.py3-none-any.whl"
+        "input_file": "wheels/urllib3-2.0.2-py3-none-any.whl"
+      },
+      {
+        "module": "wcwidth",
+        "input_file": "wheels/wcwidth-0.2.6-py2.py3-none-any.whl"
       }
     ]
   }

@@ -2,17 +2,17 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise  
-Connector Version: 2.3.1  
+Connector Version: 2.3.2
 Product Vendor: GreyNoise  
 Product Name: GreyNoise  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.3.0  
+Minimum Product Version: 5.5.0  
 
 This app provides investigative capabilities using the GreyNoise plugin
 
 [comment]: # " File: README.md"
 [comment]: # ""
-[comment]: # "  Copyright (c) GreyNoise, 2019-2022."
+[comment]: # "  Copyright (c) GreyNoise, 2019-2023."
 [comment]: # ""
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "  you may not use this file except in compliance with the License."
@@ -146,7 +146,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [on poll](#action-on-poll) - Get details on a specific GNQL query  
 [community lookup ip](#action-community-lookup-ip) - Lookup IP using GreyNoise's free community endpoint  
 [similar noise ips](#action-similar-noise-ips) - Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool  
-[noise ip timeline](#action-noise-ip-timeline) - Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool  
+[noise ip timeline](#action-noise-ip-timeline) - Lookup Daily Scanning activity for internet scanner IP using GreyNoise's IP Timeline tool  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using the supplied configuration
@@ -512,7 +512,7 @@ summary.total_objects | numeric |  |   1
 summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'noise ip timeline'
-Lookup Similar internet scanner IP using GreyNoise's IP Similarity tool
+Lookup Daily Scanning activity for internet scanner IP using GreyNoise's IP Timeline tool 
 
 Type: **investigate**  
 Read only: **True**

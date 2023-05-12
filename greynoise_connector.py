@@ -45,7 +45,7 @@ class GreyNoiseConnector(BaseConnector):
         self._session = None
         self._app_version = None
         self._api_key = None
-        self._integration_name = "splunk-soar-v2.2.0"
+        self._integration_name = "splunk-soar-v2.3.2"
 
     def _get_error_message_from_exception(self, e):
         """
