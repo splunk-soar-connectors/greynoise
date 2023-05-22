@@ -2,11 +2,11 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise  
-Connector Version: 2.3.1  
+Connector Version: 2.3.2  
 Product Vendor: GreyNoise  
 Product Name: GreyNoise  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.3.0  
+Minimum Product Version: 5.5.0  
 
 This app provides investigative capabilities using the GreyNoise plugin
 
