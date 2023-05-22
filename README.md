@@ -281,17 +281,17 @@ action_result.data.\*.raw_data.\* | string |  |   {
 }
 "ja3":[
 0:{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50" # pragma: allowlist secret
 "port":443
 }
 ]
 } 
 action_result.data.\*.raw_data.hassh.\* | string |  |   [{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50" # pragma: allowlist secret
 "port":443
 }] 
 action_result.data.\*.raw_data.ja3.\* | string |  |   [{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50" # pragma: allowlist secret
 "port":443
 }] 
 action_result.data.\*.raw_data.scan.\* | string |  |   [
@@ -379,7 +379,7 @@ action_result.data.\*.raw_data.\* | string |  |   {
 }
 "ja3":[
 0:{
-"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50"
+"fingerprint":"c3a6cf0bf2e690ac8e1ecf6081f17a50" # pragma: allowlist secret
 "port":443
 }
 ]
