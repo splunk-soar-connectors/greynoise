@@ -10,7 +10,7 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "GreyNoise",
-    "license": "Copyright (c) GreyNoise, 2019-2022",
+    "license": "Copyright (c) GreyNoise, 2019-2025",
     "app_version": "2.3.2",
     "utctime_updated": "2023-03-14T00:00:00.000000Z",
     "package_name": "phantom_greynoise",
