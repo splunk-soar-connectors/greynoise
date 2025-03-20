@@ -1,3 +1,16 @@
+# Copyright (c) 2025 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 # File: greynoise_connector.py
 #
 # Copyright (c) GreyNoise, 2019-2022.
@@ -14,7 +27,6 @@
 # and limitations under the License.
 
 # Python 3 Compatibility imports
-from __future__ import print_function, unicode_literals
 
 import ipaddress
 import json
@@ -33,7 +45,7 @@ from greynoise_consts import *
 
 
 def urljoin(base, url):
-    return _urljoin("%s/" % base.rstrip("/"), url.lstrip("/"))
+    return _urljoin("{}/".format(base.rstrip("/")), url.lstrip("/"))
 
 
 class GreyNoiseConnector(BaseConnector):
@@ -41,7 +53,7 @@ class GreyNoiseConnector(BaseConnector):
 
     def __init__(self):
         """GreyNoise App Constructor."""
-        super(GreyNoiseConnector, self).__init__()
+        super().__init__()
         self._session = None
         self._app_version = None
         self._api_key = None
@@ -68,9 +80,9 @@ class GreyNoiseConnector(BaseConnector):
             pass
 
         if not error_code:
-            error_text = "Error Message: {}".format(error_message)
+            error_text = f"Error Message: {error_message}"
         else:
-            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
+            error_text = f"Error Code: {error_code}. Error Message: {error_message}"
 
         return error_text
 
@@ -79,25 +91,19 @@ class GreyNoiseConnector(BaseConnector):
             try:
                 if not float(parameter).is_integer():
                     return (
-                        action_result.set_status(
-                            phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)
-                        ),
+                        action_result.set_status(phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)),
                         None,
                     )
 
                 parameter = int(parameter)
             except Exception:
                 return (
-                    action_result.set_status(
-                        phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)
-                    ),
+                    action_result.set_status(phantom.APP_ERROR, VALID_INTEGER_MESSAGE.format(key=key)),
                     None,
                 )
             if parameter < 0:
                 return (
-                    action_result.set_status(
-                        phantom.APP_ERROR, NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)
-                    ),
+                    action_result.set_status(phantom.APP_ERROR, NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)),
                     None,
                 )
             if not allow_zero and parameter == 0:
@@ -119,20 +125,19 @@ class GreyNoiseConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, filtered string or None in case of failure
         """
         if field:
-            fields_list = field.split(',')
+            fields_list = field.split(",")
             filtered_fields_list = []
             for value in fields_list:
                 value = value.strip()
                 if value:
                     if not self._is_valid_ip(value):
-                        error_message = "{}. {}".format(GREYNOISE_ERROR_INVALID_IP.format(ip=value),
-                                                    GREYNOISE_ERROR_INVALID_FIELDS.format(field=key))
+                        error_message = f"{GREYNOISE_ERROR_INVALID_IP.format(ip=value)}. {GREYNOISE_ERROR_INVALID_FIELDS.format(field=key)}"
                         return action_result.set_status(phantom.APP_ERROR, error_message), None
                     filtered_fields_list.append(value)
 
             if not filtered_fields_list:
                 return action_result.set_status(phantom.APP_ERROR, GREYNOISE_ERROR_INVALID_FIELDS.format(field=key)), None
-            return phantom.APP_SUCCESS, ','.join(filtered_fields_list)
+            return phantom.APP_SUCCESS, ",".join(filtered_fields_list)
         return phantom.APP_SUCCESS, field
 
     def _is_valid_ip(self, input_ip_address):
@@ -146,8 +151,8 @@ class GreyNoiseConnector(BaseConnector):
         ip_address_input = input_ip_address
 
         # If interface is present in the IP, it will be separated by the %
-        if '%' in input_ip_address:
-            ip_address_input = input_ip_address.split('%')[0]
+        if "%" in input_ip_address:
+            ip_address_input = input_ip_address.split("%")[0]
 
         try:
             ipaddress.ip_address(ip_address_input)
@@ -170,7 +175,6 @@ class GreyNoiseConnector(BaseConnector):
         return license_type, message
 
     def _greynoise_quick_ip(self, ip, action_result, session):
-
         query_success = True
 
         try:
@@ -186,9 +190,7 @@ class GreyNoiseConnector(BaseConnector):
         message = "IP Lookup action successfully completed"
 
         try:
-            result_data["visualization"] = VISUALIZATION_URL.format(
-                ip=result_data["ip"]
-            )
+            result_data["visualization"] = VISUALIZATION_URL.format(ip=result_data["ip"])
         except KeyError:
             query_success = False
             return action_result, query_success, API_PARSE_ERROR_MESSAGE
@@ -196,7 +198,6 @@ class GreyNoiseConnector(BaseConnector):
         return action_result, query_success, message
 
     def _greynoise_riot_ip(self, ip, action_result, session):
-
         query_success = True
 
         try:
@@ -209,9 +210,7 @@ class GreyNoiseConnector(BaseConnector):
         message = "RIOT Lookup IP action successfully completed"
 
         try:
-            result_data["visualization"] = VISUALIZATION_URL.format(
-                ip=result_data["ip"]
-            )
+            result_data["visualization"] = VISUALIZATION_URL.format(ip=result_data["ip"])
             if result_data["riot"] is False:
                 result_data["riot_unseen"] = True
             if "trust_level" in result_data.keys():
@@ -224,7 +223,6 @@ class GreyNoiseConnector(BaseConnector):
         return action_result, query_success, message
 
     def _greynoise_noise_ip(self, ip, action_result, session):
-
         query_success = True
 
         try:
@@ -237,9 +235,7 @@ class GreyNoiseConnector(BaseConnector):
         message = "IP reputation action successfully completed"
 
         try:
-            result_data["visualization"] = VISUALIZATION_URL.format(
-                ip=result_data["ip"]
-            )
+            result_data["visualization"] = VISUALIZATION_URL.format(ip=result_data["ip"])
             if result_data["seen"] is False:
                 result_data["unseen_rep"] = True
         except KeyError:
@@ -265,9 +261,7 @@ class GreyNoiseConnector(BaseConnector):
 
         try:
             for i in result_data:
-                i["visualization"] = VISUALIZATION_URL.format(
-                    ip=i["ip"]
-                )
+                i["visualization"] = VISUALIZATION_URL.format(ip=i["ip"])
         except KeyError:
             query_success = False
             return action_result, query_success, API_PARSE_ERROR_MESSAGE
@@ -275,7 +269,6 @@ class GreyNoiseConnector(BaseConnector):
         return action_result, query_success, message
 
     def _greynoise_community_ip(self, ip, action_result, session):
-
         query_success = True
 
         try:
@@ -288,10 +281,8 @@ class GreyNoiseConnector(BaseConnector):
         message = "Lookup IPs action successfully completed"
 
         try:
-            result_data["visualization"] = VISUALIZATION_URL.format(
-                ip=result_data["ip"]
-            )
-            if not result_data["riot"] and not result_data['noise']:
+            result_data["visualization"] = VISUALIZATION_URL.format(ip=result_data["ip"])
+            if not result_data["riot"] and not result_data["noise"]:
                 result_data["community_not_found"] = True
         except KeyError:
             query_success = False
@@ -300,7 +291,6 @@ class GreyNoiseConnector(BaseConnector):
         return action_result, query_success, message
 
     def _query_greynoise_ip(self, ip, query_type, action_result):
-
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         self.debug_print("Session initialized successfully")
 
@@ -414,7 +404,6 @@ class GreyNoiseConnector(BaseConnector):
         session = GreyNoise(api_key=self._api_key, integration_name=self._integration_name)
         query_results = []
         try:
-
             # make the initial query and add it to the query_results dict
             results = session.query(param["query"])
 
@@ -441,9 +430,7 @@ class GreyNoiseConnector(BaseConnector):
                 full_response = query_results[0]
 
                 # check the number of results to return
-                ret_val, item_size = self._validate_integer(
-                    action_result, param["size"], SIZE_ACTION_PARAM
-                )
+                ret_val, item_size = self._validate_integer(action_result, param["size"], SIZE_ACTION_PARAM)
                 if phantom.is_fail(ret_val):
                     return action_result.get_status()
 
@@ -537,7 +524,7 @@ class GreyNoiseConnector(BaseConnector):
         if license_type == "community":
             return action_result.set_status(phantom.APP_ERROR, message)
 
-        ret_val, ips = self._validate_comma_separated_ips(action_result, param['ips'], 'ips')
+        ret_val, ips = self._validate_comma_separated_ips(action_result, param["ips"], "ips")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -551,9 +538,7 @@ class GreyNoiseConnector(BaseConnector):
     def _on_poll(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
         if self.is_poll_now():
-            self.save_progress(
-                "Starting query based on configured GNQL"
-            )
+            self.save_progress("Starting query based on configured GNQL")
 
         config = self.get_config()
         param["query"] = config.get("on_poll_query")
@@ -563,20 +548,14 @@ class GreyNoiseConnector(BaseConnector):
         else:
             on_poll_size = config.get("on_poll_size", 25)
             # Validate 'on_poll_size' config parameter
-            ret_val, on_poll_size = self._validate_integer(
-                action_result, on_poll_size, ONPOLL_SIZE_CONFIG_PARAM
-            )
+            ret_val, on_poll_size = self._validate_integer(action_result, on_poll_size, ONPOLL_SIZE_CONFIG_PARAM)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             param["size"] = on_poll_size
 
         if param["query"] == "Please refer to the documentation":
-            self.save_progress(
-                "Default on poll query unchanged, please enter a valid GNQL query"
-            )
-            return action_result.set_status(
-                phantom.APP_ERROR, "Default on poll query unchanged"
-            )
+            self.save_progress("Default on poll query unchanged, please enter a valid GNQL query")
+            return action_result.set_status(phantom.APP_ERROR, "Default on poll query unchanged")
 
         query_results = self._gnql_query(param, is_poll=True, action_result=action_result)
         if isinstance(query_results, bool) and phantom.is_fail(query_results):
@@ -586,7 +565,7 @@ class GreyNoiseConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS, "No Data Found")
 
         self.save_progress("Creating containers")
-        for result in query_results[0][-int(param["size"]):]:
+        for result in query_results[0][-int(param["size"]) :]:
             container = {}
             container["name"] = "GreyNoise Alert - {}".format(result["ip"])
             # set the severity of the container based on the classification
@@ -601,20 +580,15 @@ class GreyNoiseConnector(BaseConnector):
 
             ret_val, message, cid = self.save_container(container)
             if phantom.is_fail(ret_val):
-                self.save_progress("Error saving container: {}".format(message))
-                self.debug_print("Error saving container: {} -- CID: {}".format(message, cid))
+                self.save_progress(f"Error saving container: {message}")
+                self.debug_print(f"Error saving container: {message} -- CID: {cid}")
 
-            artifact = [{
-                'cef': result,
-                'name': 'Observed Details',
-                'severity': container_severity,
-                'container_id': cid
-            }]
+            artifact = [{"cef": result, "name": "Observed Details", "severity": container_severity, "container_id": cid}]
 
             create_artifact_status, create_artifact_message, _ = self.save_artifacts(artifact)
             if phantom.is_fail(create_artifact_status):
-                self.save_progress("Error saving artifact: {}".format(create_artifact_message))
-                self.debug_print("Error saving artifact: {}".format(create_artifact_message))
+                self.save_progress(f"Error saving artifact: {create_artifact_message}")
+                self.debug_print(f"Error saving artifact: {create_artifact_message}")
                 continue
 
         # iterate through query_results and create a container for each IP returned from GN
@@ -664,7 +638,7 @@ class GreyNoiseConnector(BaseConnector):
         app_json = self.get_app_json()
         self._app_version = app_json["app_version"]
 
-        self.set_validator('ip', self._is_valid_ip)
+        self.set_validator("ip", self._is_valid_ip)
 
         return phantom.APP_SUCCESS
 
@@ -676,7 +650,6 @@ class GreyNoiseConnector(BaseConnector):
 
 
 if __name__ == "__main__":
-
     import argparse
 
     import pudb
@@ -688,7 +661,7 @@ if __name__ == "__main__":
     argparser.add_argument("input_test_json", help="Input Test JSON file")
     argparser.add_argument("-u", "--username", help="username", required=False)
     argparser.add_argument("-p", "--password", help="password", required=False)
-    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
+    argparser.add_argument("-v", "--verify", action="store_true", help="verify", required=False, default=False)
 
     args = argparser.parse_args()
     verify = args.verify
