@@ -1,19 +1,104 @@
 Splunk SOAR GreyNoise for SOAR
-Copyright (c) GreyNoise, 2019-2022
+Copyright (c) GreyNoise, 2019-2025
 
-Third-party Software Attributions:
+Third Party Software Attributions:
 
-Library: greynoise
-Version: 1.2.0
+Name: ansimarkup
+Version: 2.1.0
+Author:
+License: BSD 3-Clause License
+
+Name: cachetools
+Version: 5.5.2
+Author: Thomas Kemmer
 License: MIT
-Copyright 2021 GreyNoise <>
 
-Library: requests
-Version: 2.25.0
+Name: certifi
+Version: 2025.1.31
+Author: Kenneth Reitz
+License: MPL-2.0
+
+Name: charset-normalizer
+Version: 3.4.1
+Author:
+License: MIT
+
+Name: click
+Version: 8.1.8
+Author:
+License:
+
+Name: click-default-group
+Version: 1.2.4
+Author:
+License:
+
+Name: click-repl
+Version: 0.3.0
+Author: Markus Unterwaditzer
+License: MIT
+
+Name: colorama
+Version: 0.4.6
+Author:
+License:
+
+Name: dict2xml
+Version: 1.7.6
+Author:
+License:
+
+Name: greynoise
+Version: 2.0.0
+Author: GreyNoise Intelligence
+License: MIT
+
+Name: idna
+Version: 3.10
+Author:
+License:
+
+Name: ipaddress
+Version: 1.0.23
+Author: Philipp Hagemeister
+License: Python Software Foundation License
+
+Name: Jinja2
+Version: 3.1.6
+Author:
+License:
+
+Name: MarkupSafe
+Version: 3.0.2
+Author:
+License: Copyright 2010 Pallets
+
+Name: more-itertools
+Version: 10.6.0
+Author:
+License:
+
+Name: prompt_toolkit
+Version: 3.0.50
+Author: Jonathan Slenders
+License:
+
+Name: requests
+Version: 2.28.2
+Author: Kenneth Reitz
 License: Apache 2.0
-Kenneth Reitz
 
-Library: six
-Version: 1.15.0
+Name: six
+Version: 1.16.0
+Author: Benjamin Peterson
 License: MIT
-Copyright 2010-2020 Benjamin Peterson
+
+Name: urllib3
+Version: 1.26.20
+Author: Andrey Petrov
+License: MIT
+
+Name: wcwidth
+Version: 0.2.13
+Author: Jeff Quast
+License: MIT
