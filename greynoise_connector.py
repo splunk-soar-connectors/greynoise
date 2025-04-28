@@ -36,11 +36,11 @@ import urllib.parse
 # Phantom App imports
 import phantom.app as phantom
 import requests
-from greynoise import GreyNoise
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from six.moves.urllib.parse import urljoin as _urljoin
 
+from greynoise import GreyNoise
 from greynoise_consts import *
 
 

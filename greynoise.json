@@ -1286,11 +1286,11 @@
             },
             {
                 "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-10.6.0-py3-none-any.whl"
+                "input_file": "wheels/py3/more_itertools-10.7.0-py3-none-any.whl"
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.50-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.51-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
@@ -1346,11 +1346,11 @@
             },
             {
                 "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-10.6.0-py3-none-any.whl"
+                "input_file": "wheels/py3/more_itertools-10.7.0-py3-none-any.whl"
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.50-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.51-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
