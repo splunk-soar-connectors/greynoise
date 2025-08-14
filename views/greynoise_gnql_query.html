@@ -1,0 +1,234 @@
+<!--
+File: greynoise_gnql_query.html
+Copyright (c) GreyNoise, 2019-2025
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+-->
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%;
+    background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <style>
+  .greynoise a:link {
+    color: rgb(35, 126, 170);
+  }
+
+  .dark-theme .greynoise a:link {
+    color: rgb(130, 175, 190);
+  }
+
+  .greynoise .wf-table-horizontal {
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(70, 70, 70);
+    border-collapse: collapse;
+  }
+
+  .greynoise .wf-table-horizontal th {
+    font-weight: bold;
+    padding-left: 5px;
+    padding: 8px 10px;
+    text-align: center;
+    border: 1px solid #e1e6eb;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal th {
+    font-weight: bold;
+    padding-left: 5px;
+    padding: 8px 10px;
+    border: 1px solid rgb(70, 70, 70);
+    background-color: rgba(40, 40, 40, 0.7);
+    text-align: center;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal.datatable th.sorting {
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .greynoise .wf-table-horizontal.datatable tbody tr {
+    background-color: inherit;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal td {
+    padding: 8px 10px;
+    border: 1px solid rgb(70, 70, 70);
+  }
+
+  .dark-theme .greynoise .wf-h3-style {
+      font-size: 20px;
+      margin-top: 15px;
+      margin-bottom: 5px;
+  }
+
+  .greynoise .wf-h3-style {
+    color: rgb(200, 200, 200);
+  }
+
+  .greynoise .wf-h4-style {
+      font-size: 16px;
+      text-align: center;
+      margin: 15px 0;
+  }
+
+  .dark-theme .greynoise .wf-h4-style {
+      color: rgb(180, 180, 180);
+  }
+
+  .greynoise .malicious {
+    color: #ff5252;
+    font-weight: bold;
+  }
+
+  .greynoise .benign {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .greynoise .unknown {
+    color: #ffb74d;
+    font-weight: bold;
+  }
+
+  .greynoise .suspicious {
+    color: #d8e611;
+    font-weight: bold;
+  }
+
+  .greynoise .dataTables_filter input[type="search"], .greynoise .dataTables_filter input[type="search"]:hover {
+    border: 1px solid #aaa;
+  }
+
+  </style>
+  <!-- Main Div -->
+  {% if results %}
+    {% for result in results %}
+      <!-- loop for each result -->
+      <!------------------- For each Result ---------------------->
+      <div class="greynoise"
+           style="overflow:scroll;
+                  width: 100%;
+                  height: 100%;
+                  padding-left:10px;
+                  padding-right:10px">
+        <div class="wf-h3-style">Query Results</div>
+        {% if result.0.data %}
+          <table class="wf-table-horizontal datatable">
+            <thead>
+              <tr>
+                <th rowspan="2">IP</th>
+                <th colspan="12">Internet Scanner Intelligence</th>
+                <th colspan="6">Business Service Intelligence</th>
+                <th rowspan="2">Visualization</th>
+              </tr>
+              <tr>
+                <th>Actor</th>
+                <th>Classification</th>
+                <th>Spoofable</th>
+                <th>VPN Service</th>
+                <th>ASN</th>
+                <th>City</th>
+                <th>Source Country</th>
+                <th>Organization</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+                <th>Tags</th>
+                <th>CVEs</th>
+                <th>Trust Level</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Reference</th>
+                <th>Description</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ip in result.0.data %}
+                <tr>
+                  <td>
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip }}' }], 0, {{ container.id }}, null, false);">
+                      {{ ip.ip }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
+                  <td>{{ ip.internet_scanner_intelligence.actor | default:"-" }}</td>
+                  {% if  ip.internet_scanner_intelligence.classification == "malicious" %}
+                    <td class="malicious">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
+                  {% elif  ip.internet_scanner_intelligence.classification == "unknown" %}
+                    <td class="unknown">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
+                  {% elif  ip.internet_scanner_intelligence.classification == "suspicious" %}
+                    <td class="suspicious">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
+                  {% elif ip.internet_scanner_intelligence.classification == "benign" %}
+                    <td class="benign">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
+                  {% else %}
+                    <td>-</td>
+                  {% endif %}
+                  <td>{{ ip.internet_scanner_intelligence.spoofable }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.vpn_service | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.metadata.asn | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.metadata.source_city | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.metadata.source_country | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.metadata.organization | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.first_seen | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.last_seen | default:"-" }}</td>
+                  <td>{{ ip.tag_names | default:"-" }}</td>
+                  <td>{{ ip.internet_scanner_intelligence.cves | default:"-" }}</td>
+                  <td>{{ ip.trust_level | default:"-" }}</td>
+                  <td>{{ ip.business_service_intelligence.name | default:"-" }}</td>
+                  <td>{{ ip.business_service_intelligence.category | default:"-" }}</td>
+                  <td>{{ ip.business_service_intelligence.reference | default:"-" }}</td>
+                  <td>{{ ip.business_service_intelligence.description | default:"-" }}</td>
+                  <td>{{ ip.business_service_intelligence.explaination | default:"-" }}</td>
+                  <td>
+                    <a href="{{ ip.visualization }}" target="_blank">View on GreyNoise <i class="fa fa-external-link"></i></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="wf-h4-style">No query data found</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="wf-h4-style">No query data found</div>
+  {% endif %}
+  <!-- loop for each result end -->
+  <script>
+    $.extend(true, $.fn.dataTable.defaults, {
+        "searching": true,
+        "bLengthChange": false,
+        "language": {
+            "paginate": {
+                "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+                "next": "<i class='fa fa-angle-right fa-lg'></i>"
+            }
+        },
+        "dom": '<"top"f>rt<"bottom"p><"clear">',
+        drawCallback: function (settings) {
+            var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+            pagination.toggle(this.api().page.info().pages > 1);
+        }
+    });
+    $.fn.DataTable.ext.pager.numbers_length = 5;
+    $('.datatable').DataTable();
+  </script>
+{% endblock %}

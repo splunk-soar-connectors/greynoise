@@ -1,19 +1,6 @@
-# Copyright (c) 2025 Splunk Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 # File: greynoise_consts.py
 #
-# Copyright (c) GreyNoise, 2019-2022.
+# Copyright (c) GreyNoise, 2019-2025
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,3 +42,43 @@ GREYNOISE_STATE_FILE_CORRUPT_ERROR = (
     "Error occurred while loading the state file due to its unexpected format. "
     "Resetting the state file with the default format. Please try again."
 )
+SEVERITY_MAP = {"malicious": "high", "suspicious": "medium", "benign": "low"}
+
+DEFAULT_SIZE_FOR_ON_POLL = 25
+
+# Constants for webhook
+CONTENT_TYPE_HEADER = ["Content-Type", "application/json"]
+GREYNOISE_FEED_IP_EVENT_TYPE = "ip-classification-change"
+GREYNOISE_FEED_CVE_EVENT_TYPE = "cve-status-change"
+GREYNOISE_ALERT_TAG = "greynoise-alert"
+GREYNOISE_FEED_TAG = "greynoise-feed"
+GREYNOISE_FEED_CVE_TAG = "greynoise-feed-cve"
+GREYNOISE_FEED_IP_TAG = "greynoise-feed-ip"
+
+# Response status codes for webhook
+HTTP_OK = 200
+HTTP_BAD_REQUEST = 400
+HTTP_METHOD_NOT_ALLOWED = 405
+DEFAULT_SIZE_FOR_GNQL_QUERY = 100
+PAGINATOR_MAX_SIZE = 1000
+
+TIMELINE_VALUE_LIST = [
+    "classification",
+    "source_org",
+    "source_asn",
+    "source_rdns",
+    "http_path",
+    "http_user_agent",
+    "destination_port",
+    "tag_ids",
+]
+
+LOOKUP_IP_SUCCESS_MESSAGE = "Lookup IP action successfully completed"
+IP_REPUTATION_SUCCESS_MESSAGE = "IP Reputation action successfully completed"
+LOOKUP_IPS_SUCCESS_MESSAGE = "Lookup IPs action successfully completed"
+TEST_CONNECTIVITY_SUCCESS_MESSAGE = "Test Connectivity Passed"
+GET_CVE_DETAILS_SUCCESS_MESSAGE = "Get CVE Details action successfully completed"
+GNQL_QUERY_SUCCESS_MESSAGE = "GNQL Query action successfully completed"
+NOISE_IP_TIMELINE_SUCCESS_MESSAGE = "Noise IP Timeline action successfully completed"
+ON_POLL_DEFAULT_QUERY_ERROR_MESSAGE = "Default on poll query unchanged, please enter a valid GNQL query"
+NO_DATA_FOUND_MESSAGE = "No Data Found"
