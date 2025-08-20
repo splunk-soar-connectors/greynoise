@@ -1,0 +1,257 @@
+<!--
+File: greynoise_lookup_ips.html
+Copyright (c) GreyNoise, 2019-2025
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+-->
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%;
+    background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <style>
+  /* Link styling */
+  .greynoise a:link {
+    color: rgb(35, 126, 170);
+  }
+
+  .dark-theme .greynoise a:link {
+    color: rgb(130, 175, 190);
+  }
+
+
+  .greynoise a:hover {
+    text-decoration: underline;
+  }
+
+  /* Typography */
+  .greynoise .wf-h3-style {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+
+  .dark-theme .greynoise .wf-h3-style {
+    color: rgb(200, 200, 200);
+  }
+
+  .greynoise .wf-h4-style {
+    font-size: 16px;
+    text-align: center;
+    margin: 15px 0;
+  }
+
+  .dark-theme .greynoise .wf-h4-style {
+    color: rgb(180, 180, 180);
+  }
+
+  /* Table styling */
+  .greynoise .wf-table-horizontal {
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(70, 70, 70);
+    border-collapse: collapse;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal th.sorting {
+    background-color: rgba(50, 50, 50, 0.7);
+    font-weight: bold;
+    text-align: left;
+    padding: 12px 20px;
+    white-space: nowrap;
+    border: 1px solid rgb(70, 70, 70);
+  }
+
+  .greynoise .wf-table-horizontal td {
+    padding: 8px 15px;
+    border: 1px solid rgb(70, 70, 70);
+  }
+
+  /* Standard vertical table first column styling */
+  .greynoise .wf-table-horizontal tr td:first-child {
+    font-weight: bold;
+    width: 30%;
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .greynoise #results-container .wf-table-horizontal tr td:first-child {
+    background-color: transparent;
+    font-weight: normal;
+  }
+
+  /* Column width adjustments */
+  .greynoise .wf-table-horizontal .col-ip {
+    width: 15%;
+  }
+
+  .greynoise .wf-table-horizontal .col-bsi {
+    width: 22%;
+  }
+
+  .greynoise .wf-table-horizontal .col-trust {
+    width: 18%;
+  }
+
+  .greynoise .wf-table-horizontal .col-isi {
+    width: 22%;
+  }
+
+  .greynoise .wf-table-horizontal .col-class {
+    width: 23%;
+  }
+
+  /* Classification styling */
+  .greynoise .malicious {
+    color: #ff5252;
+    font-weight: bold;
+  }
+
+  .greynoise .suspicious {
+    color: #d8e611;
+    font-weight: bold;
+  }
+
+  .greynoise .benign {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .greynoise .unknown {
+    color: #ffb74d;
+    font-weight: bold;
+  }
+
+  /* Utility classes */
+  .greynoise .hidden {
+    display: none;
+  }
+
+  .greynoise hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(70, 70, 70, 0), rgba(70, 70, 70, 0.75), rgba(70, 70, 70, 0));
+    margin: 20px 0;
+  }
+
+  .greynoise .wf-table-horizontal th {
+    font-weight: bold;
+    padding-left: 5px;
+    padding: 8px 10px;
+    text-align: center;
+    border: 1px solid #e1e6eb;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal th {
+    border: 1px solid rgb(70, 70, 70);
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal.datatable th.sorting {
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal.datatable tbody tr {
+    background-color: inherit;
+  }
+  </style>
+  <script>
+  // Initialize DataTable
+  $.extend(true, $.fn.dataTable.defaults, {
+    "searching": false,
+    "bLengthChange": false,
+    "pageLength": 5,
+    "language": {
+      "paginate": {
+        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+        "next": "<i class='fa fa-angle-right fa-lg'></i>"
+      },
+      "emptyTable": "No data available"
+    },
+    "dom": '<"top"f>rt<"bottom"p><"clear">',
+  });
+  $('.wf-table-horizontal').DataTable();
+  </script>
+  <div class="greynoise"
+       style="overflow: auto;
+              width: 100%;
+              height: 100%;
+              padding-left:10px;
+              padding-right:10px">
+    <div class="wf-h3-style">GreyNoise IP Lookup Results</div>
+    <!-- Horizontal table for all IPs -->
+    {% for result in results %}
+      {% if result %}
+        <div id="results-container">
+          <table class="wf-table-horizontal datatable">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>Internet Service Intelligence</th>
+                <th>Classification</th>
+                <th>Business Service Intelligence</th>
+                <th>Trust Level</th>
+                <th>Visualization</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ip_data in result %}
+                <tr>
+                  <td>
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ ip_data.ip }}' }], 0, {{ container.id }}, null, false);">
+                      {{ ip_data.ip }} <i class="fa fa-caret-down" style="font-size: smaller;"></i>
+                    </a>
+                  </td>
+                  <td>{{ ip_data.internet_scanner_intelligence.found }}</td>
+                  <td>
+                    {% if ip_data.internet_scanner_intelligence.found %}
+                      <span class="{% if ip_data.internet_scanner_intelligence.classification == 'malicious' %}malicious{% elif ip_data.internet_scanner_intelligence.classification == 'benign' %}benign{% elif ip_data.internet_scanner_intelligence.classification == 'suspicious' %}suspicious{% else %}unknown{% endif %}">
+                        {{ ip_data.internet_scanner_intelligence.classification }}
+                      </span>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>{{ ip_data.business_service_intelligence.found }}</td>
+                  <td>
+                    {% if ip_data.business_service_intelligence.found and ip_data.business_service_intelligence.trust_level %}
+                      <span>{{ ip_data.trust_level }}</span>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if ip_data.visualization %}
+                      <a href="{{ ip_data.visualization }}" target="_blank">View on GreyNoise <i class="fa fa-external-link"></i></a>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="wf-h4-style">No data found for the IP(s) lookup</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}

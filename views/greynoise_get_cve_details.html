@@ -1,0 +1,298 @@
+<!--
+File: greynoise_get_cve_details.html
+Copyright (c) GreyNoise, 2019-2025
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+-->
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%;
+    background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <style>
+  .greynoise a:link {
+    color: rgb(35, 126, 170);
+  }
+
+  .dark-theme .greynoise a:link {
+    color: rgb(130, 175, 190);
+  }
+
+
+  .greynoise a:hover {
+      text-decoration: underline;
+  }
+
+  .greynoise a:visited {
+    color: mediumpurple;
+  }
+
+  .greynoise .wf-table-vertical {
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(70, 70, 70);
+    border-collapse: collapse;
+  }
+
+  .greynoise .wf-table-vertical td {
+    padding: 8px 10px;
+    border: 1px solid rgb(70, 70, 70);
+  }
+
+  .greynoise .wf-table-vertical tr td:first-child {
+    font-weight: bold;
+    width: 30%;
+    text-transform: uppercase;
+  }
+
+  .dark-theme .greynoise .wf-table-vertical tr td:first-child {
+    background-color: rgba(40, 40, 40, 0.7);
+    color: #6c818b;
+  }
+
+  .greynoise .wf-h3-style {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: rgb(200, 200, 200);
+  }
+
+  .greynoise .wf-h4-style {
+      font-size: 16px;
+      text-align: center;
+      color: rgb(180, 180, 180);
+      margin: 15px 0;
+  }
+
+  .greynoise .collapse.in {
+      display: block !important;
+  }
+
+  .greynoise .ip-header {
+    padding: 10px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    background-color: rgba(50, 50, 50, 0.7);
+    border-left: 4px solid rgb(130, 175, 190);
+  }
+
+  .greynoise .panel-collapse {
+      overflow-x: auto;
+  }
+
+  .greynoise .glyphicon.glyphicon-dot:before {
+      content: "\25cf";
+      font-size: 10px;
+  }
+
+  .risksense .no-word-wrap {
+      white-space: nowrap;
+  }
+
+  .greynoise a.nowrap {
+      white-space: nowrap;
+  }
+
+  .center {
+      text-align: center;
+  }
+
+  .greynoise .malicious {
+    color: #ff5252;
+    font-weight: bold;
+  }
+
+  .greynoise .benign {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .greynoise .unknown {
+    color: #ffb74d;
+    font-weight: bold;
+  }
+
+  .greynoise .trust-level {
+    color: #42a5f5;
+    font-weight: bold;
+  }
+
+  .greynoise .hidden {
+    display: none;
+  }
+
+  .greynoise hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(70, 70, 70, 0), rgba(70, 70, 70, 0.75), rgba(70, 70, 70, 0));
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .dark-theme .wf-table-horizontal-head {
+    background-color: #4F6A70 !important;
+    color: #e1e6eb !important;
+  }
+  .light-theme .wf-table-horizontal-head {
+    background-color: #c9d1d3 !important;
+  }
+
+  </style>
+  <div class="greynoise"
+       style="overflow: auto;
+              width: 100%;
+              height: 100%;
+              padding-left:10px;
+              padding-right:10px">
+    <!-- Main Div -->
+    {% if results %}
+      {% for result in results %}
+        <!-- loop for each result -->
+        <!------------------- For each Result ---------------------->
+        {% if result.0.id %}
+          <div>
+            <a href="javascript:;"
+               onclick="context_menu(this, [{'contains': ['cve'], 'value': '{{ result.0.ip }}' }], 0, {{ container.id }}, null, false);">
+              CVE: {{ result.0.id }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+            </a>
+          </div>
+        {% endif %}
+        {% if result.0.details %}
+          <table class="wf-table-vertical">
+            <tbody>
+              {% if result.0.details %}
+                <tr>
+                  <td colspan="2" class="center wf-table-horizontal-head">Details</td>
+                </tr>
+                <tr>
+                  <td>Vulnerability Name</td>
+                  <td>{{ result.0.details.vulnerability_name | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>{{ result.0.details.vulnerability_description | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>CVSS Score</td>
+                  <td>{{ result.0.details.cve_cvss_score | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Published to NIST NVD</td>
+                  <td>{{ result.0.details.published_to_nist_nvd | default:"False" }}</td>
+                </tr>
+              {% endif %}
+              {% if result.0.exploitation_activity %}
+                <tr>
+                  <td colspan="2" class="center wf-table-horizontal-head">Exploitation Activity</td>
+                </tr>
+                <tr>
+                  <td>Activity Seen</td>
+                  <td>{{ result.0.exploitation_activity.activity_seen | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Benign IP Count 1d</td>
+                  <td>{{ result.0.exploitation_activity.benign_ip_count_1d | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Threat IP Count 1d</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_1d | default:"False" }}</td>
+                </tr>
+                <tr>
+                  <td>Benign IP Count 10d</td>
+                  <td>{{ result.0.exploitation_activity.benign_ip_count_10d | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Threat IP Count 10d</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_10d | default:"False" }}</td>
+                </tr>
+                <tr>
+                  <td>Benign IP Count 30d</td>
+                  <td>{{ result.0.exploitation_activity.benign_ip_count_30d | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Threat IP Count 30d</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_30d | default:"False" }}</td>
+                </tr>
+              {% endif %}
+              {% if result.0.exploitation_stats %}
+                <tr>
+                  <td colspan="2" class="center wf-table-horizontal-head">Exploitation Stats</td>
+                </tr>
+                <tr>
+                  <td>Available exploits</td>
+                  <td>{{ result.0.exploitation_stats.number_of_available_exploits | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Threat Actors</td>
+                  <td>{{ result.0.exploitation_stats.number_of_threat_actors_exploiting_vulnerability | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Botnets</td>
+                  <td>{{ result.0.exploitation_stats.number_of_botnets_exploiting_vulnerability | default:"False" }}</td>
+                </tr>
+              {% endif %}
+              {% if result.0.timeline %}
+                <tr>
+                  <td colspan="2" class="center wf-table-horizontal-head">Timeline</td>
+                </tr>
+                <tr>
+                  <td>CISA date</td>
+                  <td>{{ result.0.timeline.cisa_kev_date_added | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Last Updated</td>
+                  <td>{{ result.0.timeline.cve_last_updated_date | default:"None" }}</td>
+                </tr>
+              {% endif %}
+              {% if result.0.exploitation_details %}
+                <tr>
+                  <td colspan="2" class="center wf-table-horizontal-head">Exploitation Details</td>
+                </tr>
+                <tr>
+                  <td>Attack Vector</td>
+                  <td>{{ result.0.exploitation_details.attack_vector | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Exploit Found</td>
+                  <td>{{ result.0.exploitation_details.exploit_found | default:"None" }}</td>
+                </tr>
+                <tr>
+                  <td>Registered in KEV</td>
+                  <td>{{ result.0.exploitation_details.exploitation_registered_in_kev | default:"False" }}</td>
+                </tr>
+                <tr>
+                  <td>EPSS Score</td>
+                  <td>{{ result.0.exploitation_details.epss_score | default:"None" }}</td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        {% else %}
+          <h4 class="wf-h4-style">No CVE details found</h4>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="wf-h4-style">No CVE details found</div>
+    {% endif %}
+    <!-- loop for each result end -->
+  </div>
+{% endblock %}

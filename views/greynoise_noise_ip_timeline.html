@@ -1,0 +1,248 @@
+<!--
+File: greynoise_noise_timeline.html
+Copyright (c) GreyNoise, 2019-2025
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+-->
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%;
+    background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <style>
+  .greynoise a:link {
+    color: rgb(35, 126, 170);
+  }
+
+  .dark-theme .greynoise a:link {
+    color: rgb(130, 175, 190);
+  }
+
+  .greynoise a:hover {
+    text-decoration: underline;
+  }
+
+  .greynoise a:visited {
+    color: mediumpurple;
+  }
+
+  /* Horizontal table styling */
+  .greynoise .wf-table-horizontal {
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(70, 70, 70);
+    border-collapse: collapse;
+  }
+
+  .greynoise .wf-table-horizontal th {
+    padding: 8px 10px;
+    padding-left: 5px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #e1e6eb;
+  }
+
+  .dark-theme .greynoise .wf-table-horizontal th {
+    border: 1px solid rgb(70, 70, 70);
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .greynoise .wf-table-horizontal td {
+    padding: 8px 10px;
+    border: 1px solid rgb(70, 70, 70);
+    text-align: center;
+  }
+
+  .greynoise .wf-h3-style {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: rgb(200, 200, 200);
+  }
+
+  .dark-theme .greynoise .wf-h3-style {
+    color: rgb(200, 200, 200);
+  }
+
+  .greynoise .wf-h4-style {
+    font-size: 16px;
+    text-align: center;
+    margin: 15px 0;
+  }
+
+  .dark-theme .greynoise .wf-h4-style {
+    color: rgb(180, 180, 180);
+  }
+
+  .dark-theme .greynoise .dataTable th.sorting {
+    background-color: rgba(40, 40, 40, 0.7);
+  }
+
+  .dark-theme .greynoise table.dataTable tbody tr {
+    background-color: inherit;
+  }
+
+  .greynoise .ip-header {
+    padding: 10px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    background-color: rgba(50, 50, 50, 0.7);
+    border-left: 4px solid rgb(130, 175, 190);
+  }
+
+  .greynoise .malicious {
+    color: #ff5252;
+    font-weight: bold;
+  }
+
+  .greynoise .suspicious {
+    color: #d8e611;
+    font-weight: bold;
+  }
+
+  .greynoise .benign {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .greynoise .unknown {
+    color: #ffb74d;
+    font-weight: bold;
+  }
+
+  .greynoise .hidden {
+    display: none;
+  }
+
+  .greynoise hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(70, 70, 70, 0), rgba(70, 70, 70, 0.75), rgba(70, 70, 70, 0));
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .greynoise .dataTables_filter input[type="search"], .greynoise .dataTables_filter input[type="search"]:hover {
+    border: 1px solid #aaa;
+  }
+
+  </style>
+  <script>
+  // Initialize DataTable
+  $.extend(true, $.fn.dataTable.defaults, {
+    "searching": true,
+    "bLengthChange": false,
+    "pageLength": 5,
+    "language": {
+      "paginate": {
+        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+        "next": "<i class='fa fa-angle-right fa-lg'></i>"
+      },
+      "emptyTable": "No data available"
+    },
+    "dom": '<"top"f>rt<"bottom"p><"clear">',
+  });
+  $('.dataTable').DataTable();
+  </script>
+  <div class="greynoise"
+       style="overflow: auto;
+              width: 100%;
+              height: 100%;
+              padding-left:10px;
+              padding-right:10px">
+    <!-- Main Div -->
+    {% for result in results %}
+      {% if result.0.metadata %}
+        <!-- Timeline Results -->
+        <div class="wf-h4-style">
+          Timeline Results for <b>{{ result.0.metadata.ip }}</b>
+        </div>
+        <div class="ip-section">
+          {% if result.0.results %}
+            <table class="wf-table-horizontal dataTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Label</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in result.0.results %}
+                  <tr>
+                    <td>{{ entry.timestamp }}</td>
+                    <td>
+                      {% if entry.label == "malicious" %}
+                        <span class="malicious">{{ entry.label }}</span>
+                      {% elif entry.label == "suspicious" %}
+                        <span class="suspicious">{{ entry.label }}</span>
+                      {% elif entry.label == "benign" %}
+                        <span class="benign">{{ entry.label }}</span>
+                      {% else %}
+                        <span class="unknown">{{ entry.label }}</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ entry.data }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="wf-h4-style">No timeline data found</div>
+          {% endif %}
+          <hr>
+          <!-- Metadata Section -->
+          <div class="wf-h4-style">Timeline Metadata</div>
+          <table class="wf-table-horizontal">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>Field</th>
+                <th>First Seen</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Granularity</th>
+                <th>Metric</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <a href="javascript:;"
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.metadata.ip }}' }], 0, {{ container.id }}, null, false);">
+                    {{ result.0.metadata.ip }} <i class="fa fa-caret-down" style="font-size: smaller;"></i>
+                  </a>
+                </td>
+                <td>{{ result.0.metadata.field }}</td>
+                <td>{{ result.0.metadata.first_seen }}</td>
+                <td>{{ result.0.metadata.start }}</td>
+                <td>{{ result.0.metadata.end }}</td>
+                <td>{{ result.0.metadata.granularity }}</td>
+                <td>{{ result.0.metadata.metric }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}
