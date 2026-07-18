@@ -11,7 +11,7 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "GreyNoise",
-    "license": "Copyright (c) GreyNoise, 2019-2025",
+    "license": "Copyright (c) GreyNoise, 2019-2026",
     "app_version": "3.0.0",
     "utctime_updated": "2025-08-20T21:33:24.798439Z",
     "package_name": "phantom_greynoise",
@@ -1990,16 +1990,12 @@
     "pip39_dependencies": {
         "wheel": [
             {
-                "module": "MarkupSafe",
-                "input_file": "wheels/py39/MarkupSafe-3.0.2-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
-            },
-            {
                 "module": "ansimarkup",
-                "input_file": "wheels/py3/ansimarkup-2.1.0-py3-none-any.whl"
+                "input_file": "wheels/py3/ansimarkup-2.2.0-py3-none-any.whl"
             },
             {
                 "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-6.1.0-py3-none-any.whl"
+                "input_file": "wheels/py3/cachetools-6.2.6-py3-none-any.whl"
             },
             {
                 "module": "click",
@@ -2019,7 +2015,7 @@
             },
             {
                 "module": "dict2xml",
-                "input_file": "wheels/py3/dict2xml-1.7.7-py3-none-any.whl"
+                "input_file": "wheels/py3/dict2xml-1.7.8-py3-none-any.whl"
             },
             {
                 "module": "greynoise",
@@ -2030,32 +2026,32 @@
                 "input_file": "wheels/py3/jinja2-3.1.6-py3-none-any.whl"
             },
             {
+                "module": "markupsafe",
+                "input_file": "wheels/py39/markupsafe-3.0.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
                 "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-10.7.0-py3-none-any.whl"
+                "input_file": "wheels/py3/more_itertools-10.8.0-py3-none-any.whl"
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.51-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.52-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
-                "input_file": "wheels/shared/wcwidth-0.2.13-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/wcwidth-0.8.2-py3-none-any.whl"
             }
         ]
     },
     "pip313_dependencies": {
         "wheel": [
             {
-                "module": "MarkupSafe",
-                "input_file": "wheels/py313/MarkupSafe-3.0.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
-            },
-            {
                 "module": "ansimarkup",
-                "input_file": "wheels/py3/ansimarkup-2.1.0-py3-none-any.whl"
+                "input_file": "wheels/py3/ansimarkup-2.2.0-py3-none-any.whl"
             },
             {
                 "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-6.1.0-py3-none-any.whl"
+                "input_file": "wheels/py3/cachetools-7.1.4-py3-none-any.whl"
             },
             {
                 "module": "click",
@@ -2075,7 +2071,7 @@
             },
             {
                 "module": "dict2xml",
-                "input_file": "wheels/py3/dict2xml-1.7.7-py3-none-any.whl"
+                "input_file": "wheels/py3/dict2xml-1.7.8-py3-none-any.whl"
             },
             {
                 "module": "greynoise",
@@ -2086,16 +2082,20 @@
                 "input_file": "wheels/py3/jinja2-3.1.6-py3-none-any.whl"
             },
             {
+                "module": "markupsafe",
+                "input_file": "wheels/py313/markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
                 "module": "more_itertools",
-                "input_file": "wheels/py3/more_itertools-10.7.0-py3-none-any.whl"
+                "input_file": "wheels/py3/more_itertools-11.1.0-py3-none-any.whl"
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.51-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.52-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
-                "input_file": "wheels/shared/wcwidth-0.2.13-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/wcwidth-0.8.2-py3-none-any.whl"
             }
         ]
     }
