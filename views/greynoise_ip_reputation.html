@@ -1,6 +1,6 @@
 <!--
 File: greynoise_ip_reputation.html
-Copyright (c) GreyNoise, 2019-2025
+Copyright (c) GreyNoise, 2019-2026
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -208,7 +208,7 @@ and limitations under the License.
               <tr>
                 <td>
                   <a href="javascript:;"
-                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip }}' }], 0, {{ container.id }}, null, false);">
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
                     {{ result.0.ip }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                   </a>
                 </td>
@@ -264,7 +264,7 @@ and limitations under the License.
               <tr>
                 <td>
                   <a href="javascript:;"
-                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip }}' }], 0, {{ container.id }}, null, false);">
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
                     {{ result.0.ip }}<span class="fa fa-caret-down" style="font-size: smaller;"></span>
                   </a>
                 </td>

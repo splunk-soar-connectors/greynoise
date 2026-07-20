@@ -1,6 +1,6 @@
 # File: greynoise_connector.py
 #
-# Copyright (c) GreyNoise, 2019-2025
+# Copyright (c) GreyNoise, 2019-2026
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 import ipaddress
 import json
+import re
 import sys
 import urllib.parse
 
@@ -283,6 +284,9 @@ class GreyNoiseConnector(BaseConnector):
 
     def _query_greynoise_cve(self, cve_id, action_result):
         query_success = True
+
+        if re.fullmatch(r"CVE-\d{4}-\d{4,7}", cve_id) is None:
+            return action_result, False, "Invalid CVE ID format"
 
         try:
             result_data = self._api_client.cve(cve_id)

@@ -1,9 +1,9 @@
 # GreyNoise for SOAR
 
-Publisher: GreyNoise \
-Connector Version: 3.0.0 \
-Product Vendor: GreyNoise \
-Product Name: GreyNoise \
+Publisher: GreyNoise <br>
+Connector Version: 3.0.0 <br>
+Product Vendor: GreyNoise <br>
+Product Name: GreyNoise <br>
 Minimum Product Version: 6.4.1
 
 This app provides investigative capabilities using the GreyNoise plugin and supports receiving alerts and feeds via webhook from GreyNoise
@@ -173,20 +173,20 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using the supplied configuration \
-[lookup ip](#action-lookup-ip) - Lookup IP using GreyNoise API Quick Check Endpoint \
-[ip reputation](#action-ip-reputation) - Get full GreyNoise reputation and context for a specific IP \
-[gnql query](#action-gnql-query) - Use the GreyNoise Query Language to run a query \
-[lookup ips](#action-lookup-ips) - Lookup IPs using GreyNoise API Multi Quick Check Endpoint (comma-separated, limit 500 per request) \
-[on poll](#action-on-poll) - Get details on a specific GNQL query \
-[noise ip timeline](#action-noise-ip-timeline) - GreyNoise IP Timeline lookup for events matching a specific field \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using the supplied configuration <br>
+[lookup ip](#action-lookup-ip) - Lookup IP using GreyNoise API Quick Check Endpoint <br>
+[ip reputation](#action-ip-reputation) - Get full GreyNoise reputation and context for a specific IP <br>
+[gnql query](#action-gnql-query) - Use the GreyNoise Query Language to run a query <br>
+[lookup ips](#action-lookup-ips) - Lookup IPs using GreyNoise API Multi Quick Check Endpoint (comma-separated, limit 500 per request) <br>
+[on poll](#action-on-poll) - Get details on a specific GNQL query <br>
+[noise ip timeline](#action-noise-ip-timeline) - GreyNoise IP Timeline lookup for events matching a specific field <br>
 [get cve details](#action-get-cve-details) - Retrieve details about a specific Common Vulnerabilities and Exposures (CVE)
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using the supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 Tests the connection to the paid GreyNoise API.
@@ -203,7 +203,7 @@ No Output
 
 Lookup IP using GreyNoise API Quick Check Endpoint
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -234,7 +234,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get full GreyNoise reputation and context for a specific IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Get more information about a given IP address. Returns time ranges, IP metadata (network owner, ASN, reverse DNS pointer, country), associated actors, activity tags, raw port scan, and web request information.
@@ -346,7 +346,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Use the GreyNoise Query Language to run a query
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Please refer to <a target="_blank" rel="noopener noreferrer" href="https://docs.greynoise.io/docs/using-the-greynoise-query-language-gnql">https://docs.greynoise.io/docs/using-the-greynoise-query-language-gnql/a> for further information.
@@ -449,7 +449,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Lookup IPs using GreyNoise API Multi Quick Check Endpoint (comma-separated, limit 500 per request)
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Returns quick check information for multiple IPs.
@@ -482,7 +482,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get details on a specific GNQL query
 
-Type: **ingest** \
+Type: **ingest** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -502,7 +502,7 @@ No Output
 
 GreyNoise IP Timeline lookup for events matching a specific field
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 The GreyNoise IP Timeline shows historical data on an IP address filtered by a specific field.
@@ -545,7 +545,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Retrieve details about a specific Common Vulnerabilities and Exposures (CVE)
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -594,7 +594,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
