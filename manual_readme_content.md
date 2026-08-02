@@ -33,9 +33,8 @@ You can find our updated API documentation linked [here](https://docs.greynoise.
 1. The webhook can be enabled from the Webhook Settings tab in Asset Configuration page of connector.
 1. On the Webhook Settings tab, enable the "Enable webhooks for this asset" checkbox to enable the webhook for this asset. Modifying any other settings in this tab may cause issues in data ingestion.
 1. After saving the Asset Configuration page, the webhook URL will be displayed in the Webhook Settings tab under "URL for this webhook" field.
-1. Copy the webhook URL to add it to GreyNoise.
-
-> **Note:** The webhook URL allows unauthenticated data submission to Splunk SOAR. Handle it as sensitive information.
+1. Set a strong, unique **Webhook Secret** in the asset configuration and copy the webhook URL to add it to GreyNoise.
+1. In the GreyNoise webhook configuration, add a custom header named `X-GreyNoise-Token` whose value exactly matches the asset's **Webhook Secret**. The connector rejects requests when this header is missing or invalid.
 
 ### Test Webhook (Optional)
 
@@ -119,8 +118,8 @@ You can find our updated API documentation linked [here](https://docs.greynoise.
 
 To configure a webhook in GreyNoise:
 
-- For Alerts: On the Alerts configuration page, check the Webhook checkbox, enter the webhook URL in the textbox, and save the settings.
-- For Feeds: On the Feed configuration page, under the Webhook Delivery section, enter the webhook URL in the textbox and save the settings.
+- For Alerts: On the Alerts configuration page, check the Webhook checkbox, enter the webhook URL, add the `X-GreyNoise-Token` custom header, and save the settings.
+- For Feeds: On the Feed configuration page, under the Webhook Delivery section, enter the webhook URL, add the `X-GreyNoise-Token` custom header, and save the settings.
 
 ## Details of Ingested Data
 

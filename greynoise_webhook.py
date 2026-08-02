@@ -27,6 +27,7 @@ from typing import Any, Optional, Union
 from phantom_common.install_info import get_verify_ssl_setting
 
 from greynoise_consts import *
+from greynoise_webhook_auth import is_webhook_authenticated
 
 
 # Initialize logging
@@ -594,6 +595,10 @@ def handle_webhook(
     """
     # Take container label from asset configuration
     container_label = asset.get("ingest", {}).get("container_label", "events")
+    webhook_secret = asset.get("configuration", {}).get("webhook_secret")
+    if not is_webhook_authenticated(headers, webhook_secret):
+        return create_error_response(HTTP_UNAUTHORIZED, "Unauthorized", "The GreyNoise webhook token is missing or invalid")
+
     # Validate request
     validated_data, error_response = validate_request(method, body)
     if error_response:

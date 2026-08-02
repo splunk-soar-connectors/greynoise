@@ -25,7 +25,8 @@
             "0.0.0.0/0"
         ],
         "allowed_headers": [
-            "Content-Type"
+            "Content-Type",
+            "X-GreyNoise-Token"
         ]
     },
     "configuration": {
@@ -35,17 +36,23 @@
             "required": true,
             "order": 0
         },
+        "webhook_secret": {
+            "description": "Shared token sent by GreyNoise in the X-GreyNoise-Token webhook header",
+            "data_type": "password",
+            "required": true,
+            "order": 1
+        },
         "on_poll_query": {
             "description": "GNQL query to use for the on poll action",
             "data_type": "string",
             "default": "Please refer to the documentation",
-            "order": 1
+            "order": 2
         },
         "on_poll_size": {
             "description": "The number of results to return for the interval/schedule poll",
             "data_type": "numeric",
             "default": 25,
-            "order": 2
+            "order": 3
         }
     },
     "actions": [
@@ -2051,7 +2058,7 @@
             },
             {
                 "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-7.1.4-py3-none-any.whl"
+                "input_file": "wheels/py3/cachetools-7.1.7-py3-none-any.whl"
             },
             {
                 "module": "click",
@@ -2091,7 +2098,7 @@
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.52-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.53-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
