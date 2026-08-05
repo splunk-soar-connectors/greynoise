@@ -428,7 +428,7 @@ class GreyNoiseConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        result_data, query_result, message = self._greynoise_multi_ip(ips, action_result)
+        _result_data, query_result, message = self._greynoise_multi_ip(ips, action_result)
 
         if not query_result:
             return action_result.set_status(phantom.APP_ERROR, message)
