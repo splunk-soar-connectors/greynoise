@@ -21,9 +21,7 @@
     "webhook": {
         "handler": "greynoise_webhook.handle_webhook",
         "requires_auth": false,
-        "ip_allowlist": [
-            "0.0.0.0/0"
-        ],
+        "ip_allowlist": [],
         "allowed_headers": [
             "Content-Type"
         ]
