@@ -169,11 +169,11 @@ and limitations under the License.
                     </a>
                   </td>
                   <td>{{ ip.internet_scanner_intelligence.actor | default:"-" }}</td>
-                  {% if  ip.internet_scanner_intelligence.classification == "malicious" %}
+                  {% if ip.internet_scanner_intelligence.classification == "malicious" %}
                     <td class="malicious">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
-                  {% elif  ip.internet_scanner_intelligence.classification == "unknown" %}
+                  {% elif ip.internet_scanner_intelligence.classification == "unknown" %}
                     <td class="unknown">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
-                  {% elif  ip.internet_scanner_intelligence.classification == "suspicious" %}
+                  {% elif ip.internet_scanner_intelligence.classification == "suspicious" %}
                     <td class="suspicious">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>
                   {% elif ip.internet_scanner_intelligence.classification == "benign" %}
                     <td class="benign">{{ ip.internet_scanner_intelligence.classification | default:"-" }}</td>

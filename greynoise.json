@@ -21,9 +21,7 @@
     "webhook": {
         "handler": "greynoise_webhook.handle_webhook",
         "requires_auth": false,
-        "ip_allowlist": [
-            "0.0.0.0/0"
-        ],
+        "ip_allowlist": [],
         "allowed_headers": [
             "Content-Type"
         ]
@@ -2051,7 +2049,7 @@
             },
             {
                 "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-7.1.4-py3-none-any.whl"
+                "input_file": "wheels/py3/cachetools-7.1.7-py3-none-any.whl"
             },
             {
                 "module": "click",
@@ -2091,7 +2089,7 @@
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.52-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.53-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",

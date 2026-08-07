@@ -31,11 +31,11 @@ You can find our updated API documentation linked [here](https://docs.greynoise.
 ### Configure Webhook in Connector
 
 1. The webhook can be enabled from the Webhook Settings tab in Asset Configuration page of connector.
-1. On the Webhook Settings tab, enable the "Enable webhooks for this asset" checkbox to enable the webhook for this asset. Modifying any other settings in this tab may cause issues in data ingestion.
+1. On the Webhook Settings tab, configure an allowlist for GreyNoise delivery addresses and enable the "Enable webhooks for this asset" checkbox.
 1. After saving the Asset Configuration page, the webhook URL will be displayed in the Webhook Settings tab under "URL for this webhook" field.
 1. Copy the webhook URL to add it to GreyNoise.
 
-> **Note:** The webhook URL allows unauthenticated data submission to Splunk SOAR. Handle it as sensitive information.
+> **Note:** The GreyNoise webhook does not provide documented request-signature validation. Restrict access with the webhook IP allowlist. Repeated deliveries are deduplicated, and webhook artifacts do not automatically run playbooks.
 
 ### Test Webhook (Optional)
 
