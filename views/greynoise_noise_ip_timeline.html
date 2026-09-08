@@ -1,5 +1,5 @@
 <!--
-File: greynoise_noise_timeline.html
+File: greynoise_noise_ip_timeline.html
 Copyright (c) GreyNoise, 2019-2026
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,6 @@ and limitations under the License.
     font-size: 20px;
     margin-top: 15px;
     margin-bottom: 5px;
-    color: rgb(200, 200, 200);
   }
 
   .dark-theme .greynoise .wf-h3-style {
@@ -146,23 +145,6 @@ and limitations under the License.
   }
 
   </style>
-  <script>
-  // Initialize DataTable
-  $.extend(true, $.fn.dataTable.defaults, {
-    "searching": true,
-    "bLengthChange": false,
-    "pageLength": 5,
-    "language": {
-      "paginate": {
-        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
-        "next": "<i class='fa fa-angle-right fa-lg'></i>"
-      },
-      "emptyTable": "No data available"
-    },
-    "dom": '<"top"f>rt<"bottom"p><"clear">',
-  });
-  $('.dataTable').DataTable();
-  </script>
   <div class="greynoise"
        style="overflow: auto;
               width: 100%;
@@ -178,7 +160,7 @@ and limitations under the License.
         </div>
         <div class="ip-section">
           {% if result.0.results %}
-            <table class="wf-table-horizontal dataTable">
+            <table class="wf-table-horizontal datatable">
               <thead>
                 <tr>
                   <th>Date</th>
@@ -227,8 +209,8 @@ and limitations under the License.
             <tbody>
               <tr>
                 <td>
-                  <a href="javascript:;"
-                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.metadata.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
+                  <a href="#"
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.metadata.ip|escapejs }}' }], 0, {{ container.id }}, null, false); return false;">
                     {{ result.0.metadata.ip }} <i class="fa fa-caret-down" style="font-size: smaller;"></i>
                   </a>
                 </td>
@@ -242,7 +224,27 @@ and limitations under the License.
             </tbody>
           </table>
         </div>
+      {% else %}
+        <div class="wf-h4-style">No timeline data found</div>
       {% endif %}
+    {% empty %}
+      <div class="wf-h4-style">No timeline data found</div>
     {% endfor %}
   </div>
+  <script>
+  $.extend(true, $.fn.dataTable.defaults, {
+    "searching": true,
+    "bLengthChange": false,
+    "pageLength": 5,
+    "language": {
+      "paginate": {
+        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+        "next": "<i class='fa fa-angle-right fa-lg'></i>"
+      },
+      "emptyTable": "No data available"
+    },
+    "dom": '<"top"f>rt<"bottom"p><"clear">'
+  });
+  $('.datatable').DataTable();
+  </script>
 {% endblock %}

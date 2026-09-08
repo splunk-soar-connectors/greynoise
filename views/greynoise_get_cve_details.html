@@ -71,14 +71,20 @@ and limitations under the License.
     font-size: 20px;
     margin-top: 15px;
     margin-bottom: 5px;
+  }
+
+  .dark-theme .greynoise .wf-h3-style {
     color: rgb(200, 200, 200);
   }
 
   .greynoise .wf-h4-style {
       font-size: 16px;
       text-align: center;
-      color: rgb(180, 180, 180);
       margin: 15px 0;
+  }
+
+  .dark-theme .greynoise .wf-h4-style {
+      color: rgb(180, 180, 180);
   }
 
   .greynoise .collapse.in {
@@ -97,15 +103,6 @@ and limitations under the License.
 
   .greynoise .panel-collapse {
       overflow-x: auto;
-  }
-
-  .greynoise .glyphicon.glyphicon-dot:before {
-      content: "\25cf";
-      font-size: 10px;
-  }
-
-  .risksense .no-word-wrap {
-      white-space: nowrap;
   }
 
   .greynoise a.nowrap {
@@ -170,8 +167,8 @@ and limitations under the License.
         <!------------------- For each Result ---------------------->
         {% if result.0.id %}
           <div>
-            <a href="javascript:;"
-               onclick="context_menu(this, [{'contains': ['cve'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
+            <a href="#"
+               onclick="context_menu(this, [{'contains': ['cve'], 'value': '{{ result.0.id|escapejs }}' }], 0, {{ container.id }}, null, false); return false;">
               CVE: {{ result.0.id }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
             </a>
           </div>
@@ -214,7 +211,7 @@ and limitations under the License.
                 </tr>
                 <tr>
                   <td>Threat IP Count 1d</td>
-                  <td>{{ result.0.exploitation_activity.threat_ip_count_1d | default:"False" }}</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_1d | default:"-" }}</td>
                 </tr>
                 <tr>
                   <td>Benign IP Count 10d</td>
@@ -222,7 +219,7 @@ and limitations under the License.
                 </tr>
                 <tr>
                   <td>Threat IP Count 10d</td>
-                  <td>{{ result.0.exploitation_activity.threat_ip_count_10d | default:"False" }}</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_10d | default:"-" }}</td>
                 </tr>
                 <tr>
                   <td>Benign IP Count 30d</td>
@@ -230,7 +227,7 @@ and limitations under the License.
                 </tr>
                 <tr>
                   <td>Threat IP Count 30d</td>
-                  <td>{{ result.0.exploitation_activity.threat_ip_count_30d | default:"False" }}</td>
+                  <td>{{ result.0.exploitation_activity.threat_ip_count_30d | default:"-" }}</td>
                 </tr>
               {% endif %}
               {% if result.0.exploitation_stats %}
@@ -247,7 +244,7 @@ and limitations under the License.
                 </tr>
                 <tr>
                   <td>Botnets</td>
-                  <td>{{ result.0.exploitation_stats.number_of_botnets_exploiting_vulnerability | default:"False" }}</td>
+                  <td>{{ result.0.exploitation_stats.number_of_botnets_exploiting_vulnerability | default:"-" }}</td>
                 </tr>
               {% endif %}
               {% if result.0.timeline %}
