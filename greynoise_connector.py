@@ -45,7 +45,7 @@ class GreyNoiseConnector(BaseConnector):
         self._session = None
         self._app_version = "3.1.0"
         self._api_key = None
-        self._integration_name = f"splunk-soar-v{self.get_app_json().get('app_version')}"
+        self._integration_name = None
 
     def _get_error_message_from_exception(self, e):
         """
@@ -527,6 +527,7 @@ class GreyNoiseConnector(BaseConnector):
         self._api_key = config["api_key"]
         app_json = self.get_app_json()
         self._app_version = app_json["app_version"]
+        self._integration_name = f"splunk-soar-v{self._app_version}"
 
         self.set_validator("ip", self._is_valid_ip)
 
