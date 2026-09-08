@@ -1,7 +1,7 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise <br>
-Connector Version: 3.0.1 <br>
+Connector Version: 3.1.0 <br>
 Product Vendor: GreyNoise <br>
 Product Name: GreyNoise <br>
 Minimum Product Version: 6.4.1

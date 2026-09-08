@@ -43,7 +43,7 @@ class GreyNoiseConnector(BaseConnector):
         """GreyNoise App Constructor."""
         super().__init__()
         self._session = None
-        self._app_version = None
+        self._app_version = "3.1.0"
         self._api_key = None
         self._integration_name = f"splunk-soar-v{self.get_app_json().get('app_version')}"
 

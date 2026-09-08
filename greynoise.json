@@ -12,7 +12,7 @@
     "product_version_regex": ".*",
     "publisher": "GreyNoise",
     "license": "Copyright (c) GreyNoise, 2019-2026",
-    "app_version": "3.0.1",
+    "app_version": "3.1.0",
     "utctime_updated": "2026-07-21T05:02:18.671133Z",
     "package_name": "phantom_greynoise",
     "main_module": "greynoise_connector.py",
@@ -2019,7 +2019,7 @@
             },
             {
                 "module": "greynoise",
-                "input_file": "wheels/py3/greynoise-3.0.1-py3-none-any.whl"
+                "input_file": "wheels/py3/greynoise-3.1.0-py3-none-any.whl"
             },
             {
                 "module": "jinja2",
@@ -2028,6 +2028,10 @@
             {
                 "module": "markupsafe",
                 "input_file": "wheels/py39/markupsafe-3.0.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "maxminddb",
+                "input_file": "wheels/py39/maxminddb-2.8.2-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "more_itertools",
@@ -2039,7 +2043,7 @@
             },
             {
                 "module": "wcwidth",
-                "input_file": "wheels/py3/wcwidth-0.8.2-py3-none-any.whl"
+                "input_file": "wheels/py3/wcwidth-0.8.3-py3-none-any.whl"
             }
         ]
     },
@@ -2051,11 +2055,11 @@
             },
             {
                 "module": "cachetools",
-                "input_file": "wheels/py3/cachetools-7.1.4-py3-none-any.whl"
+                "input_file": "wheels/py3/cachetools-7.0.5-py3-none-any.whl"
             },
             {
                 "module": "click",
-                "input_file": "wheels/py3/click-8.1.8-py3-none-any.whl"
+                "input_file": "wheels/py3/click-8.4.1-py3-none-any.whl"
             },
             {
                 "module": "click_default_group",
@@ -2075,7 +2079,7 @@
             },
             {
                 "module": "greynoise",
-                "input_file": "wheels/py3/greynoise-3.0.1-py3-none-any.whl"
+                "input_file": "wheels/py3/greynoise-3.1.0-py3-none-any.whl"
             },
             {
                 "module": "jinja2",
@@ -2086,16 +2090,20 @@
                 "input_file": "wheels/py313/markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
+                "module": "maxminddb",
+                "input_file": "wheels/py313/maxminddb-3.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
                 "module": "more_itertools",
                 "input_file": "wheels/py3/more_itertools-11.1.0-py3-none-any.whl"
             },
             {
                 "module": "prompt_toolkit",
-                "input_file": "wheels/py3/prompt_toolkit-3.0.52-py3-none-any.whl"
+                "input_file": "wheels/py3/prompt_toolkit-3.0.53-py3-none-any.whl"
             },
             {
                 "module": "wcwidth",
-                "input_file": "wheels/py3/wcwidth-0.8.2-py3-none-any.whl"
+                "input_file": "wheels/py3/wcwidth-0.8.3-py3-none-any.whl"
             }
         ]
     }
