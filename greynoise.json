@@ -16,7 +16,7 @@
     "utctime_updated": "2026-07-21T05:02:18.671133Z",
     "package_name": "phantom_greynoise",
     "main_module": "greynoise_connector.py",
-    "min_phantom_version": "6.4.1",
+    "min_phantom_version": "7.0.0",
     "fips_compliant": false,
     "webhook": {
         "handler": "greynoise_webhook.handle_webhook",
