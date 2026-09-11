@@ -1,10 +1,10 @@
 # GreyNoise for SOAR
 
 Publisher: GreyNoise <br>
-Connector Version: 3.0.1 <br>
+Connector Version: 3.1.0 <br>
 Product Vendor: GreyNoise <br>
 Product Name: GreyNoise <br>
-Minimum Product Version: 6.4.1
+Minimum Product Version: 7.0.0
 
 This app provides investigative capabilities using the GreyNoise plugin and supports receiving alerts and feeds via webhook from GreyNoise
 
