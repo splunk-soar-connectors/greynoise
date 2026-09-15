@@ -1,1 +1,1 @@
-greynoise==3.0.1
+greynoise==3.1.0

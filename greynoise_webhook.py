@@ -22,7 +22,7 @@ processes the alert and feed data, and creates SOAR containers and artifacts.
 import json
 import logging
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any
 
 from phantom_common.install_info import get_verify_ssl_setting
 
@@ -66,7 +66,7 @@ def create_success_response(container_id: int, artifact_ids: list[int]) -> dict[
     }
 
 
-def validate_request(method: str, body: str) -> tuple[Optional[dict[str, Any]], Optional[dict[str, Any]]]:
+def validate_request(method: str, body: str) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     """
     Validate the incoming webhook request method and body.
 
@@ -162,7 +162,7 @@ def convert_to_cef_fields(data: dict[str, Any]) -> dict[str, Any]:
     return cef_fields
 
 
-def convert_activity_state(state_data: Optional[dict[str, Any]]) -> str:
+def convert_activity_state(state_data: dict[str, Any] | None) -> str:
     """
     Convert boolean activity_seen to human-readable format
 
@@ -379,7 +379,7 @@ def create_feed_container(feed_timestamp: str, soar_rest_client: Any, container_
 
 
 # Refactored artifact creation functions to reduce code duplication
-def _create_artifact_base(container_id: int, name: str, container_label: str, severity: Optional[str], tags: list[str]) -> dict[str, Any]:
+def _create_artifact_base(container_id: int, name: str, container_label: str, severity: str | None, tags: list[str]) -> dict[str, Any]:
     """
     Create the base structure for an artifact.
 
@@ -569,7 +569,7 @@ def handle_webhook(
     method: str,
     headers: dict[str, str],
     path_parts: list[str],
-    query: dict[str, Union[str, list[str]]],
+    query: dict[str, str | list[str]],
     body: str,
     asset: dict[str, Any],
     soar_rest_client: Any,

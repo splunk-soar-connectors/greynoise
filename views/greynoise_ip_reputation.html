@@ -114,15 +114,6 @@ and limitations under the License.
     overflow-x: auto;
   }
 
-  .greynoise .glyphicon.glyphicon-dot:before {
-    content: "\25cf";
-    font-size: 10px;
-  }
-
-  .risksense .no-word-wrap {
-    white-space: nowrap;
-  }
-
   .greynoise a.nowrap {
     white-space: nowrap;
   }
@@ -207,8 +198,8 @@ and limitations under the License.
             <tbody>
               <tr>
                 <td>
-                  <a href="javascript:;"
-                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
+                  <a href="#"
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false); return false;">
                     {{ result.0.ip }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                   </a>
                 </td>
@@ -233,10 +224,18 @@ and limitations under the License.
                 <td>{{ result.0.internet_scanner_intelligence.first_seen | default:"None" }}</td>
                 <td>{{ result.0.internet_scanner_intelligence.last_seen | default:"None" }}</td>
                 <td>{{ result.0.tag_names | default:"None" }}</td>
-                <td>{{ result.0.internet_scanner_intelligence.cves | default:"None" }}</td>
+                <td>
+                  {% if result.0.internet_scanner_intelligence.cves %}
+                    {{ result.0.internet_scanner_intelligence.cves|join:", " }}
+                  {% else %}
+                    None
+                  {% endif %}
+                </td>
                 <td>
                   <span style="float: right;">
-                    <a href="{{ result.0.visualization }}" target="_blank">View on GreyNoise <i class="fa fa-external-link"></i></a>
+                    <a href="{{ result.0.visualization }}"
+                       target="_blank"
+                       rel="noopener noreferrer">View on GreyNoise <i class="fa fa-external-link"></i></a>
                   </span>
                 </td>
               </tr>
@@ -256,15 +255,15 @@ and limitations under the License.
                 <th>Trust Level</th>
                 <th>Reference</th>
                 <th>Description</th>
-                <th>Explaination</th>
+                <th>Explanation</th>
                 <th>Visualization</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>
-                  <a href="javascript:;"
-                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
+                  <a href="#"
+                     onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.0.ip|escapejs }}' }], 0, {{ container.id }}, null, false); return false;">
                     {{ result.0.ip }}<span class="fa fa-caret-down" style="font-size: smaller;"></span>
                   </a>
                 </td>
@@ -276,7 +275,9 @@ and limitations under the License.
                 <td>{{ result.0.business_service_intelligence.explanation | default:"-" }}</td>
                 <td>
                   <span style="float: right;">
-                    <a href="{{ result.0.visualization }}" target="_blank">View on GreyNoise <i class="fa fa-external-link"></i></a>
+                    <a href="{{ result.0.visualization }}"
+                       target="_blank"
+                       rel="noopener noreferrer">View on GreyNoise <i class="fa fa-external-link"></i></a>
                   </span>
                 </td>
               </tr>

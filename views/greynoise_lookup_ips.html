@@ -171,23 +171,6 @@ and limitations under the License.
     background-color: inherit;
   }
   </style>
-  <script>
-  // Initialize DataTable
-  $.extend(true, $.fn.dataTable.defaults, {
-    "searching": false,
-    "bLengthChange": false,
-    "pageLength": 5,
-    "language": {
-      "paginate": {
-        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
-        "next": "<i class='fa fa-angle-right fa-lg'></i>"
-      },
-      "emptyTable": "No data available"
-    },
-    "dom": '<"top"f>rt<"bottom"p><"clear">',
-  });
-  $('.wf-table-horizontal').DataTable();
-  </script>
   <div class="greynoise"
        style="overflow: auto;
               width: 100%;
@@ -203,7 +186,7 @@ and limitations under the License.
             <thead>
               <tr>
                 <th>IP Address</th>
-                <th>Internet Service Intelligence</th>
+                <th>Internet Scanner Intelligence</th>
                 <th>Classification</th>
                 <th>Business Service Intelligence</th>
                 <th>Trust Level</th>
@@ -214,12 +197,18 @@ and limitations under the License.
               {% for ip_data in result %}
                 <tr>
                   <td>
-                    <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ ip_data.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
+                    <a href="#"
+                       onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ ip_data.ip|escapejs }}' }], 0, {{ container.id }}, null, false); return false;">
                       {{ ip_data.ip }} <i class="fa fa-caret-down" style="font-size: smaller;"></i>
                     </a>
                   </td>
-                  <td>{{ ip_data.internet_scanner_intelligence.found }}</td>
+                  <td>
+                    {% if ip_data.internet_scanner_intelligence.found %}
+                      Yes
+                    {% else %}
+                      No
+                    {% endif %}
+                  </td>
                   <td>
                     {% if ip_data.internet_scanner_intelligence.found %}
                       <span class="{% if ip_data.internet_scanner_intelligence.classification == 'malicious' %}malicious{% elif ip_data.internet_scanner_intelligence.classification == 'benign' %}benign{% elif ip_data.internet_scanner_intelligence.classification == 'suspicious' %}suspicious{% else %}unknown{% endif %}">
@@ -229,9 +218,15 @@ and limitations under the License.
                       -
                     {% endif %}
                   </td>
-                  <td>{{ ip_data.business_service_intelligence.found }}</td>
                   <td>
-                    {% if ip_data.business_service_intelligence.found and ip_data.business_service_intelligence.trust_level %}
+                    {% if ip_data.business_service_intelligence.found %}
+                      Yes
+                    {% else %}
+                      No
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if ip_data.business_service_intelligence.found and ip_data.trust_level %}
                       <span>{{ ip_data.trust_level }}</span>
                     {% else %}
                       -
@@ -239,7 +234,9 @@ and limitations under the License.
                   </td>
                   <td>
                     {% if ip_data.visualization %}
-                      <a href="{{ ip_data.visualization }}" target="_blank">View on GreyNoise <i class="fa fa-external-link"></i></a>
+                      <a href="{{ ip_data.visualization }}"
+                         target="_blank"
+                         rel="noopener noreferrer">View on GreyNoise <i class="fa fa-external-link"></i></a>
                     {% else %}
                       -
                     {% endif %}
@@ -252,6 +249,24 @@ and limitations under the License.
       {% else %}
         <div class="wf-h4-style">No data found for the IP(s) lookup</div>
       {% endif %}
+    {% empty %}
+      <div class="wf-h4-style">No data found for the IP(s) lookup</div>
     {% endfor %}
   </div>
+  <script>
+  $.extend(true, $.fn.dataTable.defaults, {
+    "searching": false,
+    "bLengthChange": false,
+    "pageLength": 5,
+    "language": {
+      "paginate": {
+        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+        "next": "<i class='fa fa-angle-right fa-lg'></i>"
+      },
+      "emptyTable": "No data available"
+    },
+    "dom": '<"top"f>rt<"bottom"p><"clear">'
+  });
+  $('.datatable').DataTable();
+  </script>
 {% endblock %}

@@ -15,6 +15,16 @@
 from datetime import datetime
 
 
+def _join_tag_names(tags):
+    """Return a comma-separated string of tag names from GreyNoise tag objects."""
+    names = []
+    if tags and isinstance(tags, list):
+        for tag in tags:
+            if tag and isinstance(tag, dict) and tag.get("name"):
+                names.append(tag.get("name"))
+    return ", ".join(names)
+
+
 def format_timestamp(timestamp_str, input_format="%Y-%m-%dT%H:%M:%SZ", output_format="%Y-%m-%d %H:%M:%S"):
     """Helper function to format timestamps consistently."""
     try:
@@ -37,8 +47,6 @@ def display_view_ip_reputation(provides, all_app_runs, context):
     :return: str
     """
     context["results"] = results = []
-    tag_names = []
-    cve_ids = []
 
     for summary, action_results in all_app_runs:
         for result in action_results:
@@ -46,11 +54,7 @@ def display_view_ip_reputation(provides, all_app_runs, context):
             if data and isinstance(data, list):
                 if data[0] and isinstance(data[0], dict):
                     tags = data[0].get("internet_scanner_intelligence", {}).get("tags")
-                    if tags and isinstance(tags, list):
-                        for tag in tags:
-                            if tag and isinstance(tag, dict):
-                                tag_names.append(tag.get("name"))
-                data[0]["tag_names"] = tag_names
+                    data[0]["tag_names"] = _join_tag_names(tags)
             else:
                 data = []
             results.append(data)
@@ -102,12 +106,7 @@ def display_view_gnql_query(provides, all_app_runs, context):
                 if isinstance(data[0].get("data"), list) and data[0].get("data"):
                     for ip in data[0].get("data"):
                         tags = ip.get("internet_scanner_intelligence", {}).get("tags")
-                        tag_names = []
-                        if tags and isinstance(tags, list):
-                            for tag in tags:
-                                if tag and isinstance(tag, dict):
-                                    tag_names.append(tag.get("name"))
-                        ip["tag_names"] = tag_names
+                        ip["tag_names"] = _join_tag_names(tags)
             else:
                 data = []
             results.append(data)
